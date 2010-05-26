@@ -9,6 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class GeneSequence implements Iterable<IGene<?>> {
+
+    private IScore<?>            cachedScore;
     private final List<IGene<?>> genes;
 
     public GeneSequence(final Iterable<IGene<?>> geneValues) {
@@ -96,6 +98,40 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return new GeneSequence(copy);
     }
 
+    final <T> void addGene(final Genotype<T> type) {
+        markDirty();
+        final int position = genes.size();
+        genes.add(type.createGene(position));
+    }
+
+    private void markDirty() {
+        cachedScore = null;
+    }
+
+    /**
+     * @param <T>
+     * @param index
+     * @return the gene value at the given index
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getGeneValue(final int index) {
+        final IGene<?> g = getGene(index);
+        return (T) g.getValue();
+    }
+
+    public int getGeneIntValue(final int index) {
+        final Integer value = getGeneValue(index);
+        return value.intValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Comparable<T>> IScore<T> getScore(final IGeneEvaluation<T> eval) {
+        if (cachedScore == null) {
+            cachedScore = eval.score(this);
+        }
+        return (IScore<T>) cachedScore;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -139,32 +175,5 @@ public class GeneSequence implements Iterable<IGene<?>> {
     @Override
     public String toString() {
         return Joiner.on("-").join(genes);
-    }
-
-    final <T> void addGene(final Genotype<T> type) {
-        final int position = genes.size();
-        genes.add(type.createGene(position));
-    }
-
-    /**
-     * @param <T>
-     * @param index
-     * @return the gene value at the given index
-     */
-    public <T> T getGeneValue(final int index) {
-        final IGene<?> g = getGene(index);
-        return (T) g.getValue();
-    }
-
-    public int getGeneIntValue(final int index) {
-        final Integer value = getGeneValue(index);
-        return value.intValue();
-    }
-
-    private Float score;
-    public float getScore(final IGeneEvaluation eval) {
-        if (score == null)
-        score = Float.valueOf(eval.score(this));
-        return score;
     }
 }

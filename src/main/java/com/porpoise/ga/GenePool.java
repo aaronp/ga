@@ -10,27 +10,27 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.porpoise.common.ProportionalIterator;
 
-class GenePool implements IGenePool {
+class GenePool<T extends Comparable<T>> implements IGenePool {
 
     private final Comparator<GeneSequence> seqComparator;
     private final List<GeneSequence>       population;
-    private final IGeneEvaluation          geneEvaluation;
+    private final IGeneEvaluation<T>       geneEvaluation;
 
     private GeneSequence                   cachedSolution = null;
     private List<GeneSequence>             cachedSortedPopulation;
 
-    public GenePool(final IGeneEvaluation eval) {
+    public GenePool(final IGeneEvaluation<T> eval) {
         geneEvaluation = eval;
         population = Lists.newLinkedList();
         final Comparator<GeneSequence> increasing = new Comparator<GeneSequence>() {
             @Override
             public int compare(final GeneSequence o1, final GeneSequence o2) {
-                final float score1 = o1.getScore(eval);
-                final float score2 = o2.getScore(eval);
-                return Float.compare(score1, score2);
+                final IScore<T> score1 = o1.getScore(eval);
+                final IScore<T> score2 = o2.getScore(eval);
+                return score1.compareTo(score2);
             }
         };
-        // should be ordered in decreasting order
+        // should be ordered in decreasing order
         seqComparator = Ordering.from(increasing).reverse();
     }
 
@@ -48,8 +48,8 @@ class GenePool implements IGenePool {
         if (cachedSolution == null) {
             GeneSequence solution = null;
             for (final GeneSequence sequence : this) {
-                final float result = geneEvaluation.score(sequence);
-                if (result == 0.0) {
+                final IScore<T> score = geneEvaluation.score(sequence);
+                if (score.isComplete()) {
                     solution = sequence;
                     break;
                 }

@@ -124,22 +124,59 @@ public final class Proportion {
     }
 
     /**
-     * with the given proportional representation, return a number from the given range
+     * <p>
+     * Given this proportional representation, return a number from the given range, considering the low numbers the
+     * 'top' of the range.
+     * </p>
+     * <p>
+     * For example, say this proportion says in essence:
+     * <ol>
+     * <li>70% of the time, choose a number from the top 20% of the range</li>
+     * <li>25% of the time, choose a number from the middle 10% of the range</li>
+     * <li>5% of the time, choose a number from the remaining 70% of the range</li>
+     * </ol>
      * 
-     * @param total
+     * The 'ascending' bit of {@link #chooseAscending(int)} means that 0 is considered the 'top', and 'range' is
+     * considered the bottom
+     * </p>
+     * 
+     * @param range
+     *            The range from which a number will be returned, exclusive
      * @return a number from the given range, exclusive, based on the this proportions likelihood
      */
-    public int nextFrom(final int range) {
+    public int chooseAscending(final int range) {
         final double location = random.nextDouble();
-        return nextFrom(location, range);
+        return chooseAscending(location, range);
     }
 
     /**
-     * @param location
+     * see {@link #chooseAscending(int)}, but consider the higher numbers (e.g. 'range') the top of the range
+     * 
      * @param range
+     * @return a number based on the given range, exclusive
+     */
+    public int chooseDescending(final int range) {
+        final double location = random.nextDouble();
+        return chooseDescending(location, range);
+    }
+
+    /**
+     * @param range
+     * @param location
      * @return
      */
-    final int nextFrom(final double location, final int range) {
+    final int chooseDescending(final double location, final int range) {
+        int descending = range - chooseAscending(location, range);
+        if (descending < 0) {
+            descending = 0;
+        }
+        if (descending >= range) {
+            descending = range - 1;
+        }
+        return descending;
+    }
+
+    final int chooseAscending(final double location, final int range) {
         double cummulativeSize = 0.0;
         double size = 0.0;
         double totalLikelihood = 0.0;
@@ -159,9 +196,12 @@ public final class Proportion {
         final int offset = (int) (cummulativeSize * range);
         final int rangeSize = (int) (size * range);
 
-        int next = offset + random.nextInt(rangeSize + 1);
-        if (next > range) {
-            next = range;
+        final int randValue = random.nextInt(rangeSize + 1);
+        System.out.println(String.format("offset=%s, size=%s, range=%s, rangeSize=%s, randValue=%s", offset, size,
+                range, rangeSize, randValue));
+        int next = offset + randValue;
+        if (next >= range) {
+            next = range - 1;
         }
         return next;
     }

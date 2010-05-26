@@ -7,23 +7,22 @@ public enum TestEvaluations {
      * @param result
      * @return an evaluation instance which *always* returns the given rating
      */
-    public static IGeneEvaluation constant(final float result) {
-        return new IGeneEvaluation() {
+    public static IGeneEvaluation<Float> constant(final float result) {
+        return new IGeneEvaluation<Float>() {
             @Override
-            public float score(final GeneSequence sequence) {
-                return result;
+            public IScore<Float> score(final GeneSequence sequence) {
+                return Scores.valueOf(result);
             }
         };
     }
 
-    public static IGeneEvaluation increasing() {
-        return new IGeneEvaluation() {
-            float next = 0.0F;
+    public static IGeneEvaluation<Integer> increasing() {
+        return new IGeneEvaluation<Integer>() {
+            private int next = 0;
 
             @Override
-            public float score(final GeneSequence sequence) {
-                next = next + 1.0F;
-                return next;
+            public IScore<Integer> score(final GeneSequence sequence) {
+                return Scores.valueOf(next++);
             }
         };
     }

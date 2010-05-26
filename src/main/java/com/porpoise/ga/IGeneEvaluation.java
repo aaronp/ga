@@ -1,6 +1,6 @@
 package com.porpoise.ga;
 
-public interface IGeneEvaluation {
+public interface IGeneEvaluation<T> {
 
     /**
      * convert a given sequence into a score, the lower being better.
@@ -12,6 +12,6 @@ public interface IGeneEvaluation {
      * @param sequence
      * @return a score, 0.0F being the best score
      */
-    public float score(GeneSequence sequence);
+    public IScore<T> score(GeneSequence sequence);
 
 }

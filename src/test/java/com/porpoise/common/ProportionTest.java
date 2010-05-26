@@ -17,10 +17,10 @@ public class ProportionTest {
     }
 
     /**
-     * test for {@link Proportion#nextFrom(int)}
+     * test for {@link Proportion#chooseAscending(int)}
      */
     @Test
-    public void test_nextFrom() {
+    public void test_chooseAscending() {
         final Proportion prop = Proportion.with(20, 80).and(70, 15).build();
 
         final int size = 1000;
@@ -31,7 +31,7 @@ public class ProportionTest {
 
         final int sampleSize = 100000;
         for (int i = 0; i < sampleSize; i++) {
-            final int next = prop.nextFrom(size);
+            final int next = prop.chooseAscending(size);
             if (next <= 200) {
                 topTwentyCount++;
             } else if (next <= 900) {
@@ -62,34 +62,76 @@ public class ProportionTest {
     }
 
     /**
-     * test for {@link Proportion#nextFrom(int)}
+     * test for {@link Proportion#chooseAscending(int)}
      */
     @Test
-    public void test_nextFromFixed() {
+    public void test_chooseAscendingDeterministic() {
         final Proportion prop = Proportion.with(20, 80).and(70, 15).build();
 
-        // given any 'random number (here we fix it at 0.7) between 0 and .8 (0 and 80%) should return a number in the
+        // given any 'random number' between 0 and .8 (0 and 80%) should return a number in the
         // top 20% of the range
         final int range = 100;
         for (double i = 0.00; i < 0.80; i += 0.01) {
-            final int nextFrom = prop.nextFrom(i, range);
+            final int nextFrom = prop.chooseAscending(i, range);
             Assert.assertTrue(
                     "The top 80% of 'random' numbers should result in a number chosen from the top 20% of the range:"
                             + nextFrom, nextFrom >= 0 && nextFrom <= 20);
         }
 
         for (double i = 0.81; i < 0.95; i += 0.01) {
-            final int nextFrom = prop.nextFrom(i, range);
+            final int nextFrom = prop.chooseAscending(i, range);
             Assert.assertTrue(
                     "between 80% and 95% of 'random' numbers should result in a number chosen from between 20% and 90% of the range:"
                             + nextFrom, nextFrom >= 20 && nextFrom <= 90);
         }
 
         for (double i = 0.96; i <= 1.00; i += 0.01) {
-            final int nextFrom = prop.nextFrom(i, range);
-            Assert.assertTrue(
-                    "between 95% and 100% of 'random' numbers should result in a number chosen from between 90% and 100% of the range:"
-                            + nextFrom, nextFrom >= 90 && nextFrom <= range);
+            final int nextFrom = prop.chooseAscending(i, range);
+            // note: use nextFrom LESS THAN range as it should return a number EXCLUSIVE of the top number
+            Assert
+                    .assertTrue(
+                            String
+                                    .format(
+                                            "between 95%% and 100%% of 'random' numbers should result in a number chosen from between 90%% and 100%% of the range, exclusive: %.2f => %d",
+                                            i, nextFrom), nextFrom >= 90 && nextFrom < range);
+        }
+
+    }
+
+    /**
+     * test for {@link Proportion#chooseDescending(int)}
+     */
+    @Test
+    public void test_chooseDescendingDeterministic() {
+        final Proportion prop = Proportion.with(10, 75).and(50, 5).build();
+
+        // given our 'random number' i between 0 and .75 (0 and 75%) return a number in the top 20% of the range,
+        // the 'top' being the higher numbers
+        final int range = 100;
+        for (double i = 0.00; i < 0.75; i += 0.01) {
+            final int nextFrom = prop.chooseDescending(i, range);
+            Assert
+                    .assertTrue(
+                            String
+                                    .format(
+                                            "The top 75%% of 'random' numbers should result in a number chosen from the top 10%% of the range: %.2f => %d",
+                                            i, nextFrom), nextFrom >= 90 && nextFrom < range);
+        }
+
+        for (double i = 0.76; i < 0.80; i += 0.01) {
+            final int nextFrom = prop.chooseDescending(i, range);
+            Assert
+                    .assertTrue(
+                            "5% of numberes (between 75% and 80%) of 'random' numbers should result in a number chosen from between 10% and 60% of the range:"
+                                    + nextFrom, nextFrom >= 40 && nextFrom <= 90);
+        }
+
+        for (double i = 0.81; i <= 1.00; i += 0.01) {
+            final int nextFrom = prop.chooseDescending(i, range);
+            Assert
+                    .assertTrue(
+                            "20% of numbers (between 81% and 100%) of 'random' number values should result in a number chosen from between 60% and 100% of the range:"
+                                    + nextFrom, nextFrom >= 0 && nextFrom <= 40);
         }
 
     }
