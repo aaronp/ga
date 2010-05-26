@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.porpoise.common.Proportion;
 import com.porpoise.common.ProportionalIterator;
 
 class GenePool<T extends Comparable<T>> implements IGenePool {
@@ -18,9 +19,16 @@ class GenePool<T extends Comparable<T>> implements IGenePool {
 
     private GeneSequence                   cachedSolution = null;
     private List<GeneSequence>             cachedSortedPopulation;
+    private final Proportion               proportion;
 
     public GenePool(final IGeneEvaluation<T> eval) {
+        this(eval, Probability.getInstance().getDefaultPoolProportion());
+
+    }
+
+    public GenePool(final IGeneEvaluation<T> eval, final Proportion poolProportion) {
         geneEvaluation = eval;
+        this.proportion = poolProportion;
         population = Lists.newLinkedList();
         final Comparator<GeneSequence> increasing = new Comparator<GeneSequence>() {
             @Override
@@ -65,7 +73,7 @@ class GenePool<T extends Comparable<T>> implements IGenePool {
             cachedSortedPopulation = population;
             Collections.sort(cachedSortedPopulation, seqComparator);
         }
-        return new ProportionalIterator(cachedSortedPopulation);
+        return new ProportionalIterator<GeneSequence>(proportion, cachedSortedPopulation);
     }
 
     /**

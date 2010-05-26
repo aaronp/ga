@@ -2,6 +2,8 @@ package com.porpoise.ga;
 
 import java.util.Random;
 
+import com.porpoise.common.Proportion;
+
 public class Probability {
 
     private static Probability instance;
@@ -84,5 +86,10 @@ public class Probability {
     public String toString() {
         return String.format("cross change=%.2f%%, mutatbility change=%.2f%%", crossProbability * 100,
                 mutateProbability * 100);
+    }
+
+    public Proportion getDefaultPoolProportion() {
+        // top 30% 50% of the time, next 40% 40% of the time and the last 30%
+        return Proportion.with(30, 50).and(40, 40).build();
     }
 }

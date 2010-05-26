@@ -196,10 +196,10 @@ public final class Proportion {
         final int offset = (int) (cummulativeSize * range);
         final int rangeSize = (int) (size * range);
 
-        final int randValue = random.nextInt(rangeSize + 1);
-        System.out.println(String.format("offset=%s, size=%s, range=%s, rangeSize=%s, randValue=%s", offset, size,
-                range, rangeSize, randValue));
+        final int randValue = random.nextInt(rangeSize == 0 ? 1 : rangeSize);
         int next = offset + randValue;
+        // System.out.println(String.format("offset=%s, size=%s, range=%s, rangeSize=%s, randValue=%s, next=%s", offset,
+        // size, range, rangeSize, randValue, next));
         if (next >= range) {
             next = range - 1;
         }
