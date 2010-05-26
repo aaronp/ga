@@ -35,8 +35,8 @@ public class GeneSequencer {
      *            the initial size
      * @return a new gene pool of the given size
      */
-    public IGenePool newPool(final IGeneEvaluation criteria, final int size) {
-        final GenePool pool = new GenePool(criteria);
+    public <T extends Comparable<T>> IGenePool newPool(final IGeneEvaluation<T> criteria, final int size) {
+        final GenePool<T> pool = new GenePool<T>(criteria);
         for (int i = 0; i < size; i++) {
             pool.populate(create());
         }

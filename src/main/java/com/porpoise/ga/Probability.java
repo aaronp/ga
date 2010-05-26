@@ -84,8 +84,8 @@ public class Probability {
 
     @Override
     public String toString() {
-        return String.format("cross change=%.2f%%, mutatbility change=%.2f%%", crossProbability * 100,
-                mutateProbability * 100);
+        return String.format("cross change=%.2f%%, mutatbility change=%.2f%%", Float.valueOf(crossProbability * 100),
+                Float.valueOf(mutateProbability * 100));
     }
 
     public Proportion getDefaultPoolProportion() {

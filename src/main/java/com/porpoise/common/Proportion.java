@@ -49,15 +49,15 @@ public final class Proportion {
         private final double sizePercentage;
         private final double likelihoodPercentage;
 
-        public Slice(final double sizePercentage, final double likelihoodPercentage) {
-            this.sizePercentage = sizePercentage;
-            this.likelihoodPercentage = likelihoodPercentage;
-            if (sizePercentage > 1.0 || sizePercentage < 0.0) {
-                throw new IllegalArgumentException("size percentage must be between 0.0 and 1.0: " + sizePercentage);
+        public Slice(final double size, final double likelihood) {
+            this.sizePercentage = size;
+            this.likelihoodPercentage = likelihood;
+            if (size > 1.0 || size < 0.0) {
+                throw new IllegalArgumentException("size percentage must be between 0.0 and 1.0: " + size);
             }
-            if (likelihoodPercentage > 1.0 || likelihoodPercentage < 0.0) {
+            if (likelihood > 1.0 || likelihood < 0.0) {
                 throw new IllegalArgumentException("likelihood percentage must be between 0.0 and 1.0: "
-                        + likelihoodPercentage);
+                        + likelihood);
             }
         }
 
@@ -83,6 +83,7 @@ public final class Proportion {
      * @param likelihoodPercentage
      * @return
      */
+    @SuppressWarnings("synthetic-access")
     public static Builder with(final double sizePercentage, final double likelihoodPercentage) {
         return new Builder(sizePercentage, likelihoodPercentage);
     }
@@ -99,7 +100,7 @@ public final class Proportion {
         return with(sizePercentage / ONE_HUNDRED_PERCENT, likelihoodPercentage / ONE_HUNDRED_PERCENT);
     }
 
-    private Proportion(final List<Slice> slicesValues) {
+    Proportion(final List<Slice> slicesValues) {
         final List<Slice> temp = Lists.newArrayList(slicesValues);
         double totalSize = 0.0;
         double totalLikelihood = 0.0;

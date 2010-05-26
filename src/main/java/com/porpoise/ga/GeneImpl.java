@@ -12,16 +12,12 @@ class GeneImpl<T> implements IGene<T> {
         this.data = value;
     }
 
-    // @Override
-    // public IGene<T> cross(final IGene<T> gene) {
-    // return null;
-    // }
-
     @Override
     public T getValue() {
         return data;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public IGene<T> mutate(final float random) {
         return (IGene<T>) genotype.createGene(index);

@@ -50,6 +50,11 @@ public enum Operator {
 
     public abstract int apply(int valueOne, int valueTwo);
 
+    /**
+     * @param valueOne
+     * @param valueTwo
+     * @return true if the operator can be applied to the given input values
+     */
     public boolean canApply(final int valueOne, final int valueTwo) {
         return true;
     }

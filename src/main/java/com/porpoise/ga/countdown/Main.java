@@ -9,15 +9,16 @@ import com.porpoise.ga.Result;
 
 public class Main {
 
+    @SuppressWarnings("boxing")
     public static void main(final String[] args) {
         final int target = 42;
         final Integer[] numbers = { 7, 8, 2, 1 };
-        final IGeneEvaluation eval = new CountdownEvaluation(target);
+        final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
 
         final GeneSequencer seq = createSequencer(numbers);
 
         final IGenePool original = seq.newPool(eval, numbers.length * 4);
-        final Result result = new GeneticAlgorithm(eval).solve(original);
+        final Result result = new GeneticAlgorithm<Integer>(eval).solve(original);
         System.out.println(result);
     }
 

@@ -2,16 +2,16 @@ package com.porpoise.ga;
 
 import java.util.Iterator;
 
-class ChlorineImpl implements IChlorine {
+class ChlorineImpl<T> implements IChlorine {
 
-    private final IGeneEvaluation eval;
-    private final Probability     probability;
+    private final IGeneEvaluation<T> eval;
+    private final Probability        probability;
 
-    public ChlorineImpl(final IGeneEvaluation evalFormula) {
+    public ChlorineImpl(final IGeneEvaluation<T> evalFormula) {
         this(evalFormula, Probability.getInstance());
     }
 
-    public ChlorineImpl(final IGeneEvaluation evalFormula, final Probability p) {
+    public ChlorineImpl(final IGeneEvaluation<T> evalFormula, final Probability p) {
         eval = evalFormula;
         probability = p;
     }
