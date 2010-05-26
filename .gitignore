@@ -1,0 +1,15 @@
+.svn
+target
+classes
+bin
+*.log*
+settings
+*.class
+*.jar
+.project
+.classpath
+reverseEngineeredInterim
+compsGrantsWorkflow
+*~
+scratch
+.settings
