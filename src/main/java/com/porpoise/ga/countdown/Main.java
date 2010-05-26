@@ -1,7 +1,7 @@
 package com.porpoise.ga.countdown;
 
 import com.porpoise.ga.GeneSequencer;
-import com.porpoise.ga.GeneticAlgorythm;
+import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
@@ -17,7 +17,7 @@ public class Main {
         final GeneSequencer seq = createSequencer(numbers);
 
         final IGenePool original = seq.newPool(eval, numbers.length * 4);
-        final Result result = new GeneticAlgorythm(eval).solve(original);
+        final Result result = new GeneticAlgorithm(eval).solve(original);
         System.out.println(result);
     }
 

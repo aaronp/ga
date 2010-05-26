@@ -9,4 +9,6 @@ public interface IGenePool extends Iterable<GeneSequence> {
 
     GeneSequence getSolution();
 
+    void populate(GeneSequence seq);
+
 }

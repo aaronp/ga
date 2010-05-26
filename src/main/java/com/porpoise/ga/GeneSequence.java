@@ -160,4 +160,11 @@ public class GeneSequence implements Iterable<IGene<?>> {
         final Integer value = getGeneValue(index);
         return value.intValue();
     }
+
+    private Float score;
+    public float getScore(final IGeneEvaluation eval) {
+        if (score == null)
+        score = Float.valueOf(eval.score(this));
+        return score;
+    }
 }

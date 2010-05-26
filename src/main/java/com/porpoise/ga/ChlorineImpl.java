@@ -21,7 +21,7 @@ class ChlorineImpl implements IChlorine {
      */
     @Override
     public IGenePool evolve(final IGenePool pool) {
-        final GenePool newPool = new GenePool(eval);
+        final IGenePool newPool = pool;// new GenePool(eval);
 
         final Iterator<GeneSequence> iter = pool.iterator();
         while (iter.hasNext()) {
@@ -46,6 +46,8 @@ class ChlorineImpl implements IChlorine {
             newPool.populate(offspring.getOne(probability.nextMutate()));
             newPool.populate(offspring.getTwo(probability.nextMutate()));
         }
+
+        // thin out the pool
 
         return newPool;
     }
