@@ -1,34 +1,31 @@
-package com.porpoise.ga.impl;
+package com.porpoise.ga;
 
-import java.util.Random;
 
-import com.porpoise.ga.IGene;
+class GeneImpl<T> implements IGene<T> {
 
-class GeneImpl<T> implements IGene<GeneData<T>> {
+    private final int          index;
+    private final T            data;
+    private final GeneSequence sequence;
 
-    private final Genotypes<GeneData<T>> pool;
-    private final GeneData<T>           data;
-    private final Random                rand = new Random();
-
-    GeneImpl(final Genotypes<GeneData<T>> poolValue, final GeneData<T> dataValue) {
-        pool = poolValue;
-        data = dataValue;
-        assert data != null;
+    GeneImpl(final GeneSequence sequence, final int index, final T value) {
+        this.sequence = sequence;
+        this.index = index;
+        this.data = value;
     }
 
     @Override
-    public IGene<GeneData<T>> cross(final IGene<GeneData<T>> gene) {
+    public IGene<T> cross(final IGene<T> gene) {
         gene.getType();
         return null;
     }
 
     @Override
-    public GeneData<T> getType() {
+    public T getType() {
         return data;
     }
 
     @Override
-    public IGene<GeneData<T>> mutate(final float random) {
+    public IGene<T> mutate(final float random) {
         final int next = (int) (100 * random);
         final int index = prepareIndex(ordinal() + next);
         return getSafe(index);
@@ -38,8 +35,8 @@ class GeneImpl<T> implements IGene<GeneData<T>> {
      * @param index
      * @return
      */
-    private IGene<GeneData<T>> getSafe(final int index) {
-        return pool.get(index % size());
+    private IGene<T> getSafe(final int index) {
+        return (IGene<T>) sequence.getGene(index % size());
     }
 
     /**
@@ -55,7 +52,7 @@ class GeneImpl<T> implements IGene<GeneData<T>> {
             // we ended up where we started.
             // we could just guess randomly or ALWAYS go to the next one up.
             //
-            index = index + rand.nextInt(size);
+            index = index + Probability.getInstance().nextInt(size);
             index = index % size;
         }
         assert index != ordinal();
@@ -63,13 +60,18 @@ class GeneImpl<T> implements IGene<GeneData<T>> {
     }
 
     private int ordinal() {
-        return data.getIndex();
+        return index;
     }
 
     /**
      * @return
      */
     private int size() {
-        return pool.size();
+        return sequence.size();
+    }
+
+    @Override
+    public String toString() {
+        return data.toString();
     }
 }

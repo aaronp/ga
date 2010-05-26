@@ -1,6 +1,9 @@
 package com.porpoise.ga.impl;
 
+import java.util.List;
+
 import com.porpoise.ga.GeneSequence;
+import com.porpoise.ga.IGene;
 
 public class Offspring {
 
@@ -39,4 +42,24 @@ public class Offspring {
         return mutate ? offspring.mutate() : offspring;
     }
 
+    public List<IGene<?>> getOffspringOneGenes() {
+        return getOffspringOne().getGenes();
+    }
+
+    public List<IGene<?>> getOffspringTwoGenes() {
+        return getOffspringTwo().getGenes();
+    }
+
+    public IGene<?> getOneGene(final int index) {
+        return getOffspringOne().getGene(index);
+    }
+
+    public IGene<?> getTwoGene(final int index) {
+        return getOffspringTwo().getGene(index);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Offspring:%n%s%n%s", getOffspringOne(), getOffspringTwo());
+    }
 }
