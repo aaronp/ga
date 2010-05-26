@@ -1,16 +1,16 @@
-package com.porpoise.impl;
+package com.porpoise.ga.impl;
 
 import java.util.Random;
 
-import com.porpoise.IGene;
+import com.porpoise.ga.IGene;
 
 class GeneImpl<T> implements IGene<GeneData<T>> {
 
-    private final GeneSequence<GeneData<T>> pool;
+    private final Genotypes<GeneData<T>> pool;
     private final GeneData<T>           data;
     private final Random                rand = new Random();
 
-    GeneImpl(final GeneSequence<GeneData<T>> poolValue, final GeneData<T> dataValue) {
+    GeneImpl(final Genotypes<GeneData<T>> poolValue, final GeneData<T> dataValue) {
         pool = poolValue;
         data = dataValue;
         assert data != null;

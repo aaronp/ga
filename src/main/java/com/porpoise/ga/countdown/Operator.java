@@ -1,10 +1,10 @@
-package com.porpoise.countdown;
+package com.porpoise.ga.countdown;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
-import com.porpoise.IGene;
 import com.porpoise.common.Iterators;
+import com.porpoise.ga.IGene;
 
 public enum Operator implements IGene<Operator> {
 

@@ -1,4 +1,4 @@
-package com.porpoise.impl;
+package com.porpoise.ga.impl;
 
 /**
  * wrapper for our data type

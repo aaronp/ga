@@ -1,4 +1,4 @@
-package com.porpoise.countdown;
+package com.porpoise.ga.countdown;
 
 
 public class Main {

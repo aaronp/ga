@@ -1,4 +1,4 @@
-package com.porpoise;
+package com.porpoise.ga;
 
 public interface IGene<T> {
 
