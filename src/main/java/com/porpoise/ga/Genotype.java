@@ -1,13 +1,12 @@
-package com.porpoise.ga.impl;
+package com.porpoise.ga;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.AbstractIterator;
-import com.porpoise.common.Lists;
-import com.porpoise.ga.IGene;
+import com.google.common.collect.Lists;
+import com.porpoise.common.RandomizingIter;
 
 /**
  * Genotype is a factory class, responsible for producing {@link IGene}s of a certain type
@@ -15,6 +14,7 @@ import com.porpoise.ga.IGene;
  * @param <T>
  */
 public class Genotype<T> {
+
     private final List<T>     genes;
     private final Iterator<T> geneIter;
     private int               size;
@@ -36,17 +36,7 @@ public class Genotype<T> {
         size = values.size();
         assert size > 0;
         genes = Lists.newArrayList(values);
-        geneIter = new AbstractIterator<T>() {
-            private int iteratorIndex = 0;
-
-            @Override
-            protected T computeNext() {
-                final T next = genes.get(iteratorIndex);
-                iteratorIndex = iteratorIndex + 1;
-                iteratorIndex = iteratorIndex % size();
-                return next;
-            }
-        };
+        geneIter = new RandomizingIter<T>(genes);
     }
 
     public int size() {
@@ -55,6 +45,10 @@ public class Genotype<T> {
 
     public T create() {
         return geneIter.next();
+    }
+
+    public IGene<?> createGene(final int position) {
+        return new GeneImpl<T>(this, position, create());
     }
 
 }

@@ -4,23 +4,12 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.porpoise.ga.impl.Genotype;
-import com.porpoise.ga.impl.Offspring;
 
 public class GeneSequenceTest {
 
     @Test
     public void test() {
-        //
-        // create two genotypes (one of strings, one of letters)
-        //
-        final Genotype<Integer> genotype1 = Genotype.of(1, 2, 3, 4, 5, 6);
-        final Genotype<String> genotype2 = Genotype.of("a", "b", "c");
-
-        //
-        // our gene sequences will have, say, two numbers, then a letter, then a number:
-        //
-        final GeneSequencer sequencer = new GeneSequencer(genotype1, genotype1, genotype2, genotype1);
+        final GeneSequencer sequencer = TestSequencers.alphaNumeric();
 
         //
         // use our sequencer to create two sequences

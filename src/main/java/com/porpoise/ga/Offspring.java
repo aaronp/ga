@@ -1,9 +1,7 @@
-package com.porpoise.ga.impl;
+package com.porpoise.ga;
 
 import java.util.List;
 
-import com.porpoise.ga.GeneSequence;
-import com.porpoise.ga.IGene;
 
 public class Offspring {
 

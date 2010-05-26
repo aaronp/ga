@@ -1,17 +1,15 @@
-package com.porpoise.ga.impl;
+package com.porpoise.ga;
 
 import java.util.Iterator;
 
-import com.porpoise.ga.GeneSequence;
-import com.porpoise.ga.IChlorine;
-import com.porpoise.ga.IGeneEvaluation;
-import com.porpoise.ga.IGenePool;
-import com.porpoise.ga.Probability;
-
-public class ChlorineImpl implements IChlorine {
+class ChlorineImpl implements IChlorine {
 
     private final IGeneEvaluation eval;
     private final Probability     probability;
+
+    public ChlorineImpl(final IGeneEvaluation evalFormula) {
+        this(evalFormula, Probability.getInstance());
+    }
 
     public ChlorineImpl(final IGeneEvaluation evalFormula, final Probability p) {
         eval = evalFormula;
@@ -48,6 +46,7 @@ public class ChlorineImpl implements IChlorine {
             newPool.populate(offspring.getOne(probability.nextMutate()));
             newPool.populate(offspring.getTwo(probability.nextMutate()));
         }
+
         return newPool;
     }
 
@@ -59,7 +58,7 @@ public class ChlorineImpl implements IChlorine {
     private Offspring getOffspring(final GeneSequence seqOne, final GeneSequence seqTwo) {
         final Offspring offspring;
         if (probability.nextCross()) {
-            offspring = seqTwo.cross(seqTwo);
+            offspring = seqOne.cross(seqTwo);
         } else {
             offspring = new Offspring(seqOne, seqTwo);
         }

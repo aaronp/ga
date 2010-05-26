@@ -6,17 +6,23 @@ public class Probability {
 
     private static Probability instance;
 
+    private static final float DEFAULT_MUTATION  = .0015F;
+    private static final float DEFAULT_CROSSOVER = .7F;
+
+    public static final float  ALWAYS            = 1.0F;
+    public static final float  NEVER             = 0.0F;
+
     private final float        crossProbability;
     private final float        mutateProbability;
-    private final Random       rand = new Random();
+    private final Random       rand              = new Random();
 
     public Probability(final float cross, final float mutate) {
         crossProbability = cross;
         mutateProbability = mutate;
-        assert cross >= 0.0;
-        assert mutate >= 0.0;
-        assert cross <= 1.0;
-        assert mutate <= 1.0;
+        assert cross >= NEVER;
+        assert mutate >= NEVER;
+        assert cross <= ALWAYS;
+        assert mutate <= ALWAYS;
     }
 
     public boolean nextCross() {
@@ -45,7 +51,7 @@ public class Probability {
 
     public static Probability getInstance() {
         if (instance == null) {
-            instance = init(.7F, .0015F);
+            instance = init(DEFAULT_CROSSOVER, DEFAULT_MUTATION);
         }
         return instance;
     }
@@ -58,4 +64,25 @@ public class Probability {
         return rand.nextFloat();
     }
 
+    public static Probability alwaysCrossNeverMutate() {
+        return new Probability(Probability.ALWAYS, Probability.NEVER);
+    }
+
+    public static Probability neverCrossNeverMutate() {
+        return new Probability(Probability.NEVER, Probability.NEVER);
+    }
+
+    public static Probability neverCrossAlwaysMutate() {
+        return new Probability(Probability.NEVER, Probability.ALWAYS);
+    }
+
+    public static Probability alwaysCrossAlwaysMutate() {
+        return new Probability(Probability.ALWAYS, Probability.ALWAYS);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("cross change=%.2f%%, mutatbility change=%.2f%%", crossProbability * 100,
+                mutateProbability * 100);
+    }
 }

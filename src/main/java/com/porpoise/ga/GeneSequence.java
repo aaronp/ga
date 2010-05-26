@@ -6,8 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.porpoise.common.Lists;
-import com.porpoise.ga.impl.Offspring;
+import com.google.common.collect.Lists;
 
 public class GeneSequence implements Iterable<IGene<?>> {
     private final List<IGene<?>> genes;
@@ -142,7 +141,23 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return Joiner.on("-").join(genes);
     }
 
-    final <T> void addGene(final T value) {
-        genes.add(new GeneImpl<T>(this, genes.size(), value));
+    final <T> void addGene(final Genotype<T> type) {
+        final int position = genes.size();
+        genes.add(type.createGene(position));
+    }
+
+    /**
+     * @param <T>
+     * @param index
+     * @return the gene value at the given index
+     */
+    public <T> T getGeneValue(final int index) {
+        final IGene<?> g = getGene(index);
+        return (T) g.getValue();
+    }
+
+    public int getGeneIntValue(final int index) {
+        final Integer value = getGeneValue(index);
+        return value.intValue();
     }
 }

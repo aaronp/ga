@@ -1,22 +1,43 @@
 package com.porpoise.ga.countdown;
 
-import java.util.Arrays;
-import java.util.Iterator;
+public enum Operator {
 
-import com.porpoise.common.Iterators;
-import com.porpoise.ga.IGene;
+    PLUS("+") {
+        @Override
+        public int apply(final int valueOne, final int valueTwo) {
+            return valueOne + valueTwo;
+        }
+    }, //
+    DIVIDE("/") {
+        @Override
+        public int apply(final int valueOne, final int valueTwo) {
+            return valueOne / valueTwo;
+        }
 
-public enum Operator implements IGene<Operator> {
+        @Override
+        public boolean canApply(final int valueOne, final int valueTwo) {
+            final boolean divByZero = valueTwo == 0;
+            if (divByZero) {
+                return false;
+            }
 
-    PLUS("+"), //
-    DIVIDE("/"), //
-    MULTIPLY("X"), //
-    MINUS("-");//
+            return apply(valueOne, valueTwo) * valueTwo == valueOne;
+        }
+    }, //
+    MULTIPLY("X") {
+        @Override
+        public int apply(final int valueOne, final int valueTwo) {
+            return valueOne * valueTwo;
+        }
+    }, //
+    MINUS("-") {
+        @Override
+        public int apply(final int valueOne, final int valueTwo) {
+            return valueOne - valueTwo;
+        }
+    }; //
 
-    @SuppressWarnings("boxing")
-    private static Iterator<Integer> nextJump = Iterators.cycle(Arrays.asList(1, 2, 3));
-
-    private final String             operator;
+    private final String operator;
 
     private Operator(final String op) {
         operator = op;
@@ -27,57 +48,10 @@ public enum Operator implements IGene<Operator> {
         return operator;
     }
 
-    @Override
-    public IGene<Operator> cross(final IGene<Operator> gene) {
-        final int index = ordinal() + gene.getType().ordinal() * 7;
-        return getSafe(index);
+    public abstract int apply(int valueOne, int valueTwo);
+
+    public boolean canApply(final int valueOne, final int valueTwo) {
+        return true;
     }
 
-    /**
-     * @param index
-     * @return
-     */
-    private static Operator getSafe(final int index) {
-        return Operator.values()[index % size()];
-    }
-
-    /**
-     * @param sum
-     * @return a different index than this ordinal
-     */
-    private int prepareIndex(final int sum) {
-        final int size = size();
-
-        int index = sum % size;
-        if (index == ordinal()) {
-            //
-            // we ended up where we started.
-            // we could just guess randomly or ALWAYS go to the next one up.
-            // instead we cycle, always going 1, 2 or three away from where we are
-            //
-            index = index + nextJump.next().intValue();
-            index = index % size;
-        }
-        assert index != ordinal();
-        return index;
-    }
-
-    /**
-     * @return
-     */
-    private static int size() {
-        return Operator.values().length;
-    }
-
-    @Override
-    public Operator getType() {
-        return this;
-    }
-
-    @Override
-    public IGene<Operator> mutate(final float random) {
-        final int next = (int) (100 * random);
-        final int index = prepareIndex(ordinal() + next);
-        return getSafe(index);
-    }
 }
