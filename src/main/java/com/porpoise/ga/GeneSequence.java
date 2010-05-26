@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.porpoise.common.Lists;
+import com.porpoise.ga.impl.Offspring;
 
 public class GeneSequence implements Iterable<IGene<?>> {
     private final List<IGene<?>> genes;
@@ -14,8 +15,8 @@ public class GeneSequence implements Iterable<IGene<?>> {
         this(Arrays.asList(geneValues));
     }
 
-    public GeneSequence(final List<IGene<?>> geneValues) {
-        genes = Lists.newArrayList(geneValues);
+    private GeneSequence(final List<IGene<?>> geneValues) {
+        genes = geneValues;
     }
 
     /**
@@ -30,9 +31,43 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return genes.iterator();
     }
 
-    public GeneSequence cross(final GeneSequence seqTwo) {
+    public int size() {
+        return genes.size();
+    }
+
+    public Offspring cross(final GeneSequence other) {
+        final Probability probability = Probability.getInstance();
+
+        assert size() == other.size();
+        final int os = probability.nextInt(size());
+
+        Lists.newArrayList(genes);
+        Lists.newArrayList(other.genes);
+
         return null;
 
+    }
+
+    /**
+     * mutate the gene sequence, altering one gene in the sequence
+     * 
+     * @return the mutated gene sequence
+     */
+    public GeneSequence mutate() {
+        final Probability probability = Probability.getInstance();
+        return mutate(probability);
+    }
+
+    /**
+     * @param probability
+     * @return
+     */
+    GeneSequence mutate(final Probability probability) {
+        final int pos = probability.nextInt(genes.size());
+        final List<IGene<?>> copy = Lists.newArrayList(genes);
+        final IGene<?> mutated = copy.get(pos).mutate(probability.nextFloat());
+        copy.set(pos, mutated);
+        return new GeneSequence(copy);
     }
 
 }
