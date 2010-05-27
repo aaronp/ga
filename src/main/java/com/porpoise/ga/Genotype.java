@@ -13,7 +13,7 @@ import com.porpoise.common.RandomizingIter;
  * 
  * @param <T>
  */
-public class Genotype<T> implements IGenotype {
+public class Genotype<T> implements IGenotype<T> {
 
     private final List<T>     genes;
     private final Iterator<T> geneIter;
@@ -46,7 +46,7 @@ public class Genotype<T> implements IGenotype {
         return geneIter.next();
     }
 
-    IGene<?> createGene(final int position) {
+    public IGene<T> createGene(final int position) {
         return new GeneImpl<T>(this, position, create());
     }
 }

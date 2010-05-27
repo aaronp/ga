@@ -167,24 +167,17 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     public Offspring cross(final int pos, final GeneSequence other) {
         assert size() == other.size();
 
-        final List<IGene<?>> copyOne = Lists.newArrayListWithExpectedSize(size());
-        final List<IGene<?>> copyTwo = Lists.newArrayListWithExpectedSize(size());
+        final GeneSequence copyA = copySequence();
+        final GeneSequence copyB = other.copySequence();
 
-        for (int index = 0; index < pos; index++) {
+        for (int index = pos; index < size(); index++) {
             final IGene<?> a = getGene(index).copy();
             final IGene<?> b = other.getGene(index).copy();
-            copyOne.set(index, b);
-            copyTwo.set(index, a);
-        }
-        for (int index = pos; index < size(); index++) {
-            final IGene<?> a = copyOne.get(index);
-            final IGene<?> b = copyTwo.get(index);
-
-            copyOne.set(index, b);
-            copyTwo.set(index, a);
+            copyA.setGene(index, b);
+            copyB.setGene(index, a);
         }
 
-        return new Offspring(new GeneSequence(copyOne), new GeneSequence(copyTwo));
+        return new Offspring(copyA, copyB);
     }
 
     /**
@@ -227,8 +220,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      */
     private void putGeneInternal(final IGene<?> newGene) {
         genes.add(newGene);
-        genesByType.put(newGene.getType(), newGene);
-        genesByValue.put(newGene.getValue(), newGene);
+        updateReferences(newGene);
+
     }
 
     private void markDirty() {
@@ -349,8 +342,36 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         return Iterables.getOnlyElement(diff);
     }
 
-    public void setGene(final int index, final IGene<?> newGene) {
-        genes.set(index, newGene);
+    @SuppressWarnings("unchecked")
+    public <T> IGene<T> setGene(final int index, final IGene<T> newGene) {
+        final GeneImpl<T> copy = copy(index, newGene);
+        final IGene<?> replaced = genes.set(index, copy);
+        genesByType.remove(replaced.getType(), replaced);
+        genesByValue.remove(replaced.getValue(), replaced);
+
+        updateReferences(copy);
+
+        return (IGene<T>) replaced;
+    }
+
+    /**
+     * @param <T>
+     * @param copy
+     */
+    private <T> void updateReferences(final IGene<T> copy) {
+        genesByType.put(copy.getType(), copy);
+        genesByValue.put(copy.getValue(), copy);
+    }
+
+    /**
+     * @param <T>
+     * @param index
+     * @param newGene
+     * @return
+     */
+    private <T> GeneImpl<T> copy(final int index, final IGene<T> newGene) {
+        final GeneImpl<T> newG = new GeneImpl<T>(newGene.getType(), index, newGene.getValue());
+        return newG;
     }
 
     public Offspring crossBySwap(final Probability probability, final GeneSequence other) {
@@ -358,10 +379,123 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         return crossBySwap(position, other);
     }
 
-    public Offspring crossBySwap(final int position, final GeneSequence other) {
-        final IGene<?> a = getGene(position);
-        other.getGeneOfTypeAndValue(a.getType(), a.getValue());
+    /**
+     * @param pos
+     * @param other
+     * @return
+     */
+    public Offspring crossBySwap(final int pos, final GeneSequence other) {
+        final GeneSequence copyA = copySequence();
+        final GeneSequence copyB = other.copySequence();
 
-        return null;
+        final IGene<?> geneToSwap = copyA.getGene(pos);
+        for (final IGene<?> candidate : copyB.getGenesByType(geneToSwap.getType())) {
+            if (!candidate.getValue().equals(geneToSwap.getValue())) {
+                copyA.setGene(pos, candidate);
+                copyB.setGene(candidate.getPosition(), geneToSwap);
+                break;
+            }
+        }
+
+        return new Offspring(copyA, copyB);
+    }
+
+    /**
+     * swap two type values, maintaining value-uniqueness across the type.
+     * 
+     * consider the two sequences:
+     * 
+     * <pre>
+     * 2-1-a-3-4
+     * 3-1-b-2-4
+     * </pre>
+     * 
+     * a normal {@link #crossBySwap(int, GeneSequence)} of the fourth gene would look like this:
+     * 
+     * <pre>
+     * 2-1-a-3-4
+     * 3-1-b-2-4
+     * 
+     * yields:
+     * 
+     *       |
+     * 2-1-a-2-4
+     * 3-1-b-3-2
+     *       |
+     * </pre>
+     * 
+     * But if we are to maintain unique values across type (and assuming the numeric genes all came from the same genome
+     * and hence are the same 'type'), the same swap then triggers:
+     * 
+     * <pre>
+     * 2-1-a-3-4
+     * 3-1-b-2-4
+     * 
+     * yields:
+     * 
+     *       |
+     * 2-1-a-2-4
+     * 3-1-b-3-2
+     *       |
+     *       
+     * then 
+     * 
+     * |     
+     * 3-1-a-4-4
+     * 2-1-b-3-2
+     * |
+     * 
+     * then
+     *  
+     *         |     
+     * 3-1-a-4-2
+     * 2-1-b-3-4
+     *         |
+     * 
+     * </pre>
+     * 
+     * @param pos
+     * @param other
+     * @return
+     */
+    public Offspring crossBySwapUniqueValuesInType(final int pos, final GeneSequence other) {
+        final GeneSequence copyA = copySequence();
+        final GeneSequence copyB = other.copySequence();
+
+        //
+        // 1) pick the gene to swap
+        //
+
+        //
+        // 2) find the unique position of the same gene in the other sequence
+        //
+
+        //
+        // 3) if it is the same, then we're done. If not
+        //
+
+        final IGene<?> geneToSwap = copyA.getGene(pos);
+        for (final IGene<?> candidate : copyB.getGenesByType(geneToSwap.getType())) {
+            if (!candidate.getValue().equals(geneToSwap.getValue())) {
+                copyA.setGene(pos, candidate);
+                copyB.setGene(candidate.getPosition(), geneToSwap);
+                break;
+            }
+        }
+
+        return new Offspring(copyA, copyB);
+    }
+
+    final GeneSequence copySequence() {
+        final List<IGene<?>> geneCopy = newGenes();
+        for (int index = 0; index < size(); index++) {
+            final IGene<?> a = getGene(index).copy();
+            geneCopy.add(a);
+        }
+        return new GeneSequence(geneCopy);
+    }
+
+    private List<IGene<?>> newGenes() {
+        return Lists.newArrayListWithExpectedSize(size());
     }
 }

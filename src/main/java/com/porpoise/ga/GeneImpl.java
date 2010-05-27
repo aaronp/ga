@@ -2,11 +2,11 @@ package com.porpoise.ga;
 
 public class GeneImpl<T> implements IGene<T> {
 
-    private final int         index;
-    private final T           data;
-    private final Genotype<T> genotype;
+    private final int       index;
+    private final T         data;
+    private final IGenotype genotype;
 
-    public GeneImpl(final Genotype<T> type, final int geneIndex, final T value) {
+    public GeneImpl(final IGenotype type, final int geneIndex, final T value) {
         this.genotype = type;
         this.index = geneIndex;
         this.data = value;
@@ -26,10 +26,9 @@ public class GeneImpl<T> implements IGene<T> {
         return data;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public IGene<T> mutate(final float random) {
-        return (IGene<T>) genotype.createGene(index);
+        return genotype.createGene(index);
     }
 
     @Override

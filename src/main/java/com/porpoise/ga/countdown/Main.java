@@ -101,6 +101,9 @@ public class Main {
             protected GeneSequence doMutate(final GeneSequence seqOne) {
 
                 final GeneSequence mutation = seqOne.mutate(getProbability());
+                if (true) {
+                    return mutation;
+                }
 
                 final Pair<Integer, IGene<?>> onlyDiff = seqOne.onlyDiff(mutation);
                 final IGene<?> newGene = onlyDiff.getSecond();
