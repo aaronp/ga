@@ -6,6 +6,7 @@ import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
+import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
 public class Main {
@@ -15,7 +16,7 @@ public class Main {
         // final int target = 42;
         // final Integer[] numbers = { 7, 8, 2, 1 };
         final int target = 592;
-        final Integer[] numbers = { 7, 8, 2, 1, 9, 3 };
+        final Integer[] numbers = { 7, 8, 2, 1, 9, 3, 14, 11 };
 
         doit(target, numbers);
     }
@@ -39,13 +40,14 @@ public class Main {
      * @return
      */
     private static Result solve(final int target, final Integer[] numbers) {
-        final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
+        final Probability config = Probability.getInstance();
 
+        final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
         final GeneSequencer seq = createSequencer(numbers);
 
         final int poolSize = numbers.length * Operator.values().length;
         final IGenePool original = seq.newPool(eval, poolSize);
-        final Result result = new GeneticAlgorithm<Integer>(eval).solve(original);
+        final Result result = new GeneticAlgorithm(config).solve(original);
         return result;
     }
 

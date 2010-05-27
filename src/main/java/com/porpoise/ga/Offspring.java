@@ -2,7 +2,6 @@ package com.porpoise.ga;
 
 import java.util.List;
 
-
 public class Offspring {
 
     private final GeneSequence offspringOne;
@@ -28,16 +27,17 @@ public class Offspring {
         return offspringTwo;
     }
 
-    public GeneSequence getOne(final boolean mutate) {
-        return get(offspringOne, mutate);
+    public GeneSequence getOne(final Probability probability) {
+        return get(offspringOne, probability);
     }
 
-    public GeneSequence getTwo(final boolean mutate) {
-        return get(offspringTwo, mutate);
+    public GeneSequence getTwo(final Probability probability) {
+        return get(offspringTwo, probability);
     }
 
-    private GeneSequence get(final GeneSequence offspring, final boolean mutate) {
-        return mutate ? offspring.mutate() : offspring;
+    private GeneSequence get(final GeneSequence offspring, final Probability probability) {
+        final boolean mutate = probability.nextMutate();
+        return mutate ? offspring.mutate(probability) : offspring;
     }
 
     public List<IGene<?>> getOffspringOneGenes() {
@@ -60,4 +60,5 @@ public class Offspring {
     public String toString() {
         return String.format("Offspring:%n%s%n%s", getOffspringOne(), getOffspringTwo());
     }
+
 }

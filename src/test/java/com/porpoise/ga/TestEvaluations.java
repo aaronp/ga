@@ -18,6 +18,15 @@ public enum TestEvaluations {
         };
     }
 
+    public static IGeneEvaluation<Integer> constant(final int result) {
+        return new IGeneEvaluation<Integer>() {
+            @Override
+            public IScore<Integer> score(final GeneSequence sequence) {
+                return Scores.valueOf(result);
+            }
+        };
+    }
+
     public static IGeneEvaluation<Integer> increasing() {
         return new IGeneEvaluation<Integer>() {
             private int next = 0;

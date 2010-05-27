@@ -2,17 +2,11 @@ package com.porpoise.ga;
 
 import java.util.Iterator;
 
-class ChlorineImpl<T> implements IChlorine {
+class ChlorineImpl implements IChlorine {
 
-    private final IGeneEvaluation<T> eval;
-    private final Probability        probability;
+    private final Probability probability;
 
-    public ChlorineImpl(final IGeneEvaluation<T> evalFormula) {
-        this(evalFormula, Probability.getInstance());
-    }
-
-    public ChlorineImpl(final IGeneEvaluation<T> evalFormula, final Probability p) {
-        eval = evalFormula;
+    public ChlorineImpl(final Probability p) {
         probability = p;
     }
 
@@ -30,7 +24,7 @@ class ChlorineImpl<T> implements IChlorine {
             // if we have an odd number in our gene pool then we may need to terminate early
             if (!iter.hasNext()) {
                 if (probability.nextMutate()) {
-                    newPool.populate(seqOne.mutate());
+                    newPool.populate(seqOne.mutate(probability));
                 } else {
                     newPool.populate(seqOne);
                 }
@@ -43,8 +37,8 @@ class ChlorineImpl<T> implements IChlorine {
             final Offspring offspring = getOffspring(seqOne, seqTwo);
 
             // potentially mutate the offspring
-            newPool.populate(offspring.getOne(probability.nextMutate()));
-            newPool.populate(offspring.getTwo(probability.nextMutate()));
+            newPool.populate(offspring.getOne(probability));
+            newPool.populate(offspring.getTwo(probability));
         }
 
         // thin out the pool
@@ -61,7 +55,7 @@ class ChlorineImpl<T> implements IChlorine {
     private Offspring getOffspring(final GeneSequence seqOne, final GeneSequence seqTwo) {
         final Offspring offspring;
         if (probability.nextCross()) {
-            offspring = seqOne.cross(seqTwo);
+            offspring = seqOne.cross(probability, seqTwo);
         } else {
             offspring = new Offspring(seqOne, seqTwo);
         }

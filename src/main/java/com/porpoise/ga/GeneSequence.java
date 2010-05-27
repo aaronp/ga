@@ -3,6 +3,7 @@ package com.porpoise.ga;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
@@ -73,12 +74,25 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     /**
      * cross this sequence with another, resulting in two offspring
      * 
+     * @param rand
      * @param other
      *            the other sequence with which to cross with this sequence
      * @return the offspring resulting from the 'breeding' (crossing) of these two sequences
      */
-    public Offspring cross(final GeneSequence other) {
-        final Probability probability = Probability.getInstance();
+    public Offspring cross(final Random rand, final GeneSequence other) {
+        final int pos = rand.nextInt(size());
+        return cross(other, pos);
+    }
+
+    /**
+     * cross this sequence with another, resulting in two offspring
+     * 
+     * @param probability
+     * @param other
+     *            the other sequence with which to cross with this sequence
+     * @return the offspring resulting from the 'breeding' (crossing) of these two sequences
+     */
+    public Offspring cross(final Probability probability, final GeneSequence other) {
         final int pos = probability.nextInt(size());
         return cross(other, pos);
     }
