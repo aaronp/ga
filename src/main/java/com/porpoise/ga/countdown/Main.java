@@ -1,7 +1,7 @@
 package com.porpoise.ga.countdown;
 
 import com.google.common.base.Joiner;
-import com.porpoise.ga.ChlorineImpl;
+import com.porpoise.ga.AbstractChlorine;
 import com.porpoise.ga.GeneImpl;
 import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.GeneSequencer;
@@ -11,6 +11,7 @@ import com.porpoise.ga.IChlorine;
 import com.porpoise.ga.IGene;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
+import com.porpoise.ga.Offspring;
 import com.porpoise.ga.Pair;
 import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
@@ -95,13 +96,11 @@ public class Main {
 
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
-        final IChlorine chlorine = new ChlorineImpl(config) {
+        final IChlorine chlorine = new AbstractChlorine(config) {
             @Override
-            protected GeneSequence mutate(final GeneSequence seqOne) {
-                if (true) {
-                    return super.mutate(seqOne);
-                }
-                final GeneSequence mutation = super.mutate(seqOne);
+            protected GeneSequence doMutate(final GeneSequence seqOne) {
+
+                final GeneSequence mutation = seqOne.mutate(getProbability());
 
                 final Pair<Integer, IGene<?>> onlyDiff = seqOne.onlyDiff(mutation);
                 final IGene<?> newGene = onlyDiff.getSecond();
@@ -121,6 +120,12 @@ public class Main {
                     }
                 }
                 return mutation;
+            }
+
+            @Override
+            protected Offspring doCross(final GeneSequence seqOne, final GeneSequence seqTwo) {
+                final Offspring offspring = seqOne.cross(getProbability(), seqTwo);
+                return offspring;
             }
         };
 

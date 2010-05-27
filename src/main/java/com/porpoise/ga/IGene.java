@@ -14,6 +14,11 @@ public interface IGene<T> {
     T getValue();
 
     /**
+     * @return the zero-based position (index)
+     */
+    int getPosition();
+
+    /**
      * 
      * @param random
      * @return a new gene based on a mutation from this gene

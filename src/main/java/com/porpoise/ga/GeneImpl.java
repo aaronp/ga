@@ -27,4 +27,11 @@ public class GeneImpl<T> implements IGene<T> {
     public String toString() {
         return data.toString();
     }
+
+    /**
+     * @return the index
+     */
+    public int getPosition() {
+        return this.index;
+    }
 }

@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Random;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
  * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific
@@ -20,8 +22,9 @@ import com.google.common.collect.Lists;
  */
 public final class GeneSequence implements Iterable<IGene<?>> {
 
-    private IScore<?>            cachedScore;
-    private final List<IGene<?>> genes;
+    private IScore<?>                        cachedScore;
+    private final List<IGene<?>>             genes;
+    private final Multimap<Object, IGene<?>> genesByValue;
 
     /**
      * @param geneValues
@@ -41,6 +44,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
 
     private GeneSequence(final List<IGene<?>> geneValues) {
         genes = Lists.newArrayList(geneValues);
+        genesByValue = ArrayListMultimap.create();
     }
 
     /**
@@ -49,6 +53,14 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      */
     public IGene<?> getGene(final int index) {
         return genes.get(index);
+    }
+
+    /**
+     * @param value
+     * @return the genes in this sequence which have the given value
+     */
+    public Collection<IGene<?>> getGenesByValue(final Object value) {
+        return genesByValue.get(value);
     }
 
     /**
@@ -83,7 +95,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      */
     public Offspring cross(final Random rand, final GeneSequence other) {
         final int pos = rand.nextInt(size());
-        return cross(other, pos);
+        return cross(pos, other);
     }
 
     /**
@@ -96,19 +108,20 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      */
     public Offspring cross(final Probability probability, final GeneSequence other) {
         final int pos = probability.nextInt(size());
-        return cross(other, pos);
+        return cross(pos, other);
     }
 
     /**
      * cross this sequence with another at the given index
      * 
-     * @param other
-     *            the other sequence with which to cross with this one
      * @param pos
      *            the position at which the sequences will be crossed
+     * @param other
+     *            the other sequence with which to cross with this one
+     * 
      * @return the offspring from the cross
      */
-    public Offspring cross(final GeneSequence other, final int pos) {
+    public Offspring cross(final int pos, final GeneSequence other) {
         assert size() == other.size();
 
         final List<IGene<?>> copyOne = Lists.newArrayList(genes);
@@ -278,5 +291,22 @@ public final class GeneSequence implements Iterable<IGene<?>> {
 
     public void setGene(final int index, final IGene<?> newGene) {
         genes.set(index, newGene);
+    }
+
+    public Offspring crossBySwap(final Probability probability, final GeneSequence other) {
+        final int position = probability.nextInt(size());
+        return crossBySwap(position, other);
+    }
+
+    public Offspring crossBySwap(final int position, final GeneSequence other) {
+        final IGene<?> a = getGene(position);
+        other.getGene(position);
+
+        final Collection<IGene<?>> gbv = other.getGenesByValue(a);
+        if (gbv.size() != 1) {
+            return cross(position, other);
+        }
+
+        return null;
     }
 }

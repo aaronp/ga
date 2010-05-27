@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
  * 
  * Creates gene sequences based on given {@link Genotype} patterns
  */
-public class GeneSequencer {
+public final class GeneSequencer {
 
     private final List<Genotype<?>> genotypes;
 
@@ -21,10 +21,18 @@ public class GeneSequencer {
     }
 
     public GeneSequence create() {
-        final GeneSequence seq = new GeneSequence();
+        final GeneSequence seq = newSequence();
         for (final Genotype<?> type : genotypes) {
             seq.addGene(type);
         }
+        return seq;
+    }
+
+    /**
+     * @return
+     */
+    protected GeneSequence newSequence() {
+        final GeneSequence seq = new GeneSequence();
         return seq;
     }
 

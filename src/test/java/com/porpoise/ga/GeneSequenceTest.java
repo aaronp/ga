@@ -10,6 +10,16 @@ import org.junit.Test;
  * Tests for the {@link GeneSequence} class
  */
 public class GeneSequenceTest {
+
+    @Test
+    public void test_swap() {
+        final GeneSequencer sequencer = TestSequencers.alphaNumeric(10);
+        final GeneSequence a = sequencer.create();
+        final GeneSequence b = sequencer.create();
+        a.crossBySwap(Probability.getInstance(), b);
+
+    }
+
     /**
      * Test for the {@link GeneSequence#diff(GeneSequence)} method
      */
@@ -32,7 +42,7 @@ public class GeneSequenceTest {
     }
 
     /**
-     * Test for the {@link GeneSequence#cross(GeneSequence, int)} method
+     * Test for the {@link GeneSequence#cross(int, GeneSequence)} method
      */
     @Test
     public void test_cross() {
@@ -49,7 +59,7 @@ public class GeneSequenceTest {
         // call the method under test - prove the two can "breed"
         // cross them after the second gene
         //
-        final Offspring offspring = seq1.cross(seq2, 2);
+        final Offspring offspring = seq1.cross(2, seq2);
 
         System.out.println(String.format("%s X %s => %s", seq1, seq2, offspring));
 

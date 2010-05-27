@@ -4,17 +4,37 @@ package com.porpoise.ga;
 public enum TestSequencers {
     ;// uninstantiable
 
+    private static final Genotype<Integer> integerGenotype = Genotype.of(1, 2, 3, 4, 5, 6);
+    private static final Genotype<String> characterGenotype = Genotype.of("a", "b", "c");
+    
+    public static Genotype<Integer> integers()
+    {
+        return integerGenotype;
+    }
+    public static Genotype<String> characters()
+    {
+        return characterGenotype;
+    }
+    
     public static GeneSequencer alphaNumeric() {
-        //
-        // create two genotypes (one of strings, one of letters)
-        //
-        final Genotype<Integer> genotype1 = Genotype.of(1, 2, 3, 4, 5, 6);
-        final Genotype<String> genotype2 = Genotype.of("a", "b", "c");
-
-        //
-        // our gene sequences will have, say, two numbers, then a letter, then a number:
-        //
-        final GeneSequencer sequencer = new GeneSequencer(genotype1, genotype1, genotype2, genotype1);
+        final int size = 4;
+        return alphaNumeric(size);
+    }
+    /**
+     * @param size
+     * @return
+     */
+    public static GeneSequencer alphaNumeric(final int size) {
+        final GeneSequencer sequencer = new GeneSequencer();
+        
+        for (int i = 0 ;i < size; i++)
+        {
+            if (i % 2 == 0) {
+                sequencer.addGenotype(characterGenotype);
+            } else {
+                sequencer.addGenotype(integerGenotype);
+            }
+        }
 
         return sequencer;
     }
