@@ -31,4 +31,6 @@ public interface IGene<T> {
      * @return a new gene based on a mutation from this gene
      */
     IGene<T> mutate(float random);
+
+    IGene<?> copy();
 }

@@ -36,28 +36,23 @@ public class GeneSequenceTest {
         final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
         Assert.assertTrue(genes.contains(firstGene));
         final IGenotype type = firstGene.getType();
-        for (final IGene<?> g : genes) {
-            Assert.assertEquals(value, g.getValue());
-            Assert.assertEquals(type, g.getType());
-        }
+        assertTypeAndValue(genes, value, type);
     }
 
     /**
-     * tests for {@link GeneSequence#getGenesByValue(Object)}
+     * tests for {@link GeneSequence#getGenesByType(IGenotype)}
      */
-//    @Test
-//    public void test_getGenesByValue() {
-//        final GeneSequence seq1 = sequencer.create();
-//        final IGene<?> firstGene = seq1.getGene(0);
-//        final Object value = firstGene.getValue();
-//        final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
-//        Assert.assertTrue(genes.contains(firstGene));
-//        final IGenotype type = firstGene.getType();
-//        for (final IGene<?> g : genes) {
-//            Assert.assertEquals(value, g.getValue());
-//            Assert.assertEquals(type, g.getType());
-//        }
-//    }
+    @Test
+    public void test_getGenesByType() {
+        final GeneSequence seq1 = sequencer.create();
+        final IGene<?> firstGene = seq1.getGene(1);
+        final IGenotype type = firstGene.getType();
+        final Collection<IGene<?>> genes = seq1.getGenesByType(type);
+        Assert.assertTrue(genes.contains(firstGene));
+        for (final IGene<?> g : genes) {
+            Assert.assertEquals(type, g.getType());
+        }
+    }
 
     /**
      * Test for the {@link GeneSequence#diff(GeneSequence)} method
@@ -81,17 +76,54 @@ public class GeneSequenceTest {
     }
 
     /**
+     * test for {@link GeneSequence#getGeneOfTypeAndValue(IGenotype, Object)}
+     */
+    @Test
+    public void test_getGenesByTypeAndValue() {
+        final GeneSequence seq1 = sequencer.create();
+        final IGene<?> firstGene = seq1.getGene(0);
+        final Object value = firstGene.getValue();
+        final IGenotype type = firstGene.getType();
+        final Collection<IGene<?>> genes = seq1.getGenesByTypeAndValue(type, value);
+        Assert.assertTrue(genes.contains(firstGene));
+        assertTypeAndValue(genes, value, type);
+    }
+
+    /**
+     * @param genes
+     * @param value
+     * @param type
+     */
+    private void assertTypeAndValue(final Collection<IGene<?>> genes, final Object value, final IGenotype type) {
+        for (final IGene<?> g : genes) {
+            Assert.assertEquals(value, g.getValue());
+            Assert.assertEquals(type, g.getType());
+        }
+    }
+
+    @Test
+    public void test_swap() {
+        final GeneSequence seq1 = sequencer.create();
+        final GeneSequence seq2 = sequencer.create();
+        final Offspring swapped = seq1.crossBySwap(1, seq2);
+        System.out.println(seq1);
+        System.out.println(seq2);
+        System.out.println(swapped);
+
+    }
+
+    /**
      * Test for the {@link GeneSequence#cross(int, GeneSequence)} method
      */
     @Test
     public void test_cross() {
-        final GeneSequencer sequencer = TestSequencers.alphaNumeric();
+        final GeneSequencer sqncr = TestSequencers.alphaNumeric();
 
         //
         // use our sequencer to create two sequences
         //
-        final GeneSequence seq1 = sequencer.create();
-        final GeneSequence seq2 = sequencer.create();
+        final GeneSequence seq1 = sqncr.create();
+        final GeneSequence seq2 = sqncr.create();
         Assert.assertFalse(seq1.equals(seq2));
 
         //

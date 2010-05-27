@@ -4,10 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -67,6 +70,40 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      */
     public Collection<IGene<?>> getGenesByValue(final Object value) {
         return genesByValue.get(value);
+    }
+
+    /**
+     * @param type
+     * @param value
+     * @return the genes which have the given type and value
+     */
+    public Collection<IGene<?>> getGenesByTypeAndValue(final IGenotype type, final Object value) {
+        final Collection<IGene<?>> byValue = getGenesByValue(value);
+        final Collection<IGene<?>> byType = getGenesByType(type);
+        return Collections2.filter(byValue, Predicates.in(byType));
+    }
+
+    /**
+     * the single gene of the given type and value. If no gene exists with the specified type and value, then a
+     * {@link NoSuchElementException} will be thrown. If multiple genes exist with the given type and value, then an
+     * {@link IllegalArgumentException} will be thrown.
+     * 
+     * @param type
+     * @param value
+     * @return the single gene of the given type and value
+     * @throws NoSuchElementException
+     *             , IllegalArgumentException
+     */
+    public IGene<?> getGeneOfTypeAndValue(final IGenotype type, final Object value) {
+        return Iterables.getOnlyElement(getGenesByTypeAndValue(type, value));
+    }
+
+    /**
+     * @param type
+     * @return a collection of all genes of the given type
+     */
+    public Collection<IGene<?>> getGenesByType(final IGenotype type) {
+        return genesByType.get(type);
     }
 
     /**
@@ -130,8 +167,15 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     public Offspring cross(final int pos, final GeneSequence other) {
         assert size() == other.size();
 
-        final List<IGene<?>> copyOne = Lists.newArrayList(genes);
-        final List<IGene<?>> copyTwo = Lists.newArrayList(other.genes);
+        final List<IGene<?>> copyOne = Lists.newArrayListWithExpectedSize(size());
+        final List<IGene<?>> copyTwo = Lists.newArrayListWithExpectedSize(size());
+
+        for (int index = 0; index < pos; index++) {
+            final IGene<?> a = getGene(index).copy();
+            final IGene<?> b = other.getGene(index).copy();
+            copyOne.set(index, b);
+            copyTwo.set(index, a);
+        }
         for (int index = pos; index < size(); index++) {
             final IGene<?> a = copyOne.get(index);
             final IGene<?> b = copyTwo.get(index);
@@ -316,12 +360,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
 
     public Offspring crossBySwap(final int position, final GeneSequence other) {
         final IGene<?> a = getGene(position);
-        other.getGene(position);
-
-        final Collection<IGene<?>> gbv = other.getGenesByValue(a);
-        if (gbv.size() != 1) {
-            return cross(position, other);
-        }
+        other.getGeneOfTypeAndValue(a.getType(), a.getValue());
 
         return null;
     }
