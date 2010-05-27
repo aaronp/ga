@@ -22,9 +22,10 @@ import com.google.common.collect.Multimap;
  */
 public final class GeneSequence implements Iterable<IGene<?>> {
 
-    private IScore<?>                        cachedScore;
-    private final List<IGene<?>>             genes;
-    private final Multimap<Object, IGene<?>> genesByValue;
+    private IScore<?>                           cachedScore;
+    private final List<IGene<?>>                genes;
+    private final Multimap<Object, IGene<?>>    genesByValue;
+    private final Multimap<IGenotype, IGene<?>> genesByType;
 
     /**
      * @param geneValues
@@ -43,8 +44,13 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     }
 
     private GeneSequence(final List<IGene<?>> geneValues) {
-        genes = Lists.newArrayList(geneValues);
+        genes = Lists.newArrayList();
         genesByValue = ArrayListMultimap.create();
+        genesByType = ArrayListMultimap.create();
+
+        for (final IGene<?> gene : geneValues) {
+            putGeneInternal(gene);
+        }
     }
 
     /**
@@ -168,7 +174,17 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     final <T> void addGene(final Genotype<T> type) {
         markDirty();
         final int position = genes.size();
-        genes.add(type.createGene(position));
+        final IGene<?> newGene = type.createGene(position);
+        putGeneInternal(newGene);
+    }
+
+    /**
+     * @param newGene
+     */
+    private void putGeneInternal(final IGene<?> newGene) {
+        genes.add(newGene);
+        genesByType.put(newGene.getType(), newGene);
+        genesByValue.put(newGene.getValue(), newGene);
     }
 
     private void markDirty() {
