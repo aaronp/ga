@@ -2,13 +2,16 @@ package com.porpoise.ga.countdown;
 
 import com.google.common.base.Joiner;
 import com.porpoise.ga.ChlorineImpl;
+import com.porpoise.ga.GeneImpl;
 import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.GeneSequencer;
 import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
 import com.porpoise.ga.IChlorine;
+import com.porpoise.ga.IGene;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
+import com.porpoise.ga.Pair;
 import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
@@ -18,8 +21,8 @@ public class Main {
     public static void main(final String[] args) {
         // final int target = 42;
         // final Integer[] numbers = { 7, 8, 2, 1 };
-        final int target = 396;
-        final Integer[] numbers = { 7, 8, 2, 1, 9, 3, 5 };
+        final int target = 96;
+        final Integer[] numbers = { 7, 8, 2, 3 };
 
         doit(target, numbers);
     }
@@ -48,7 +51,7 @@ public class Main {
         // the probability object is really a configuration or probabilities (cross rates, cull rates, mutations, ...).
         // here we use the default configuration
         //
-        final Probability config = Probability.getInstance();
+        final Probability config = Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
 
         // all our algorithm really needs is an initial gene pool,
         // as the gene pool knows how to maintain (cull) itself
@@ -87,13 +90,36 @@ public class Main {
      */
     private static GeneticAlgorithm newAlgorithm(final Probability config) {
 
+        // TODO - use the other one we created elsewhere
+        final Genotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
+
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
         final IChlorine chlorine = new ChlorineImpl(config) {
             @Override
             protected GeneSequence mutate(final GeneSequence seqOne) {
+                if (true) {
+                    return super.mutate(seqOne);
+                }
                 final GeneSequence mutation = super.mutate(seqOne);
-                // TODO - don't create invalid mutations
+
+                final Pair<Integer, IGene<?>> onlyDiff = seqOne.onlyDiff(mutation);
+                final IGene<?> newGene = onlyDiff.getSecond();
+
+                // if we've mutated a number, then swap it with the same number elsewhere
+                if (newGene.getValue() instanceof Integer) {
+                    final int mutatedValue = ((Integer) newGene.getValue()).intValue();
+                    final int mutatedValueIndex = onlyDiff.getFirst().intValue();
+                    for (int i = 0; i < mutation.size(); i += 2) {
+                        final int value = mutation.getGeneIntValue(i);
+                        if (value == mutatedValue && i != mutatedValueIndex) {
+                            final int swapValue = seqOne.getGeneIntValue(mutatedValueIndex);
+                            final IGene<?> swap = new GeneImpl<Integer>(numberType, i, Integer.valueOf(swapValue));
+                            mutation.setGene(i, swap);
+                            break;
+                        }
+                    }
+                }
                 return mutation;
             }
         };

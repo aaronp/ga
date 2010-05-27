@@ -1,14 +1,41 @@
 package com.porpoise.ga;
 
+import java.util.Collection;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-
+/**
+ * Tests for the {@link GeneSequence} class
+ */
 public class GeneSequenceTest {
-
+    /**
+     * Test for the {@link GeneSequence#diff(GeneSequence)} method
+     */
     @Test
-    public void test() {
+    public void test_diff() {
+        final GeneSequencer sequencer = TestSequencers.alphaNumeric();
+
+        //
+        // use our sequencer to create two sequences
+        //
+        final GeneSequence seq1 = sequencer.create();
+        final GeneSequence seq2 = seq1.mutate();
+
+        final Collection<Pair<Integer, IGene<?>>> differences = seq1.diff(seq2);
+        Assert.assertEquals(1, differences.size());
+        System.out.println(seq1);
+        System.out.println(seq2);
+        System.out.println(differences);
+
+    }
+
+    /**
+     * Test for the {@link GeneSequence#cross(GeneSequence, int)} method
+     */
+    @Test
+    public void test_cross() {
         final GeneSequencer sequencer = TestSequencers.alphaNumeric();
 
         //

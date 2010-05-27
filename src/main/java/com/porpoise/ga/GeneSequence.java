@@ -1,12 +1,14 @@
 package com.porpoise.ga;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -236,5 +238,45 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     public String toString(final String separator) {
         final String string = Joiner.on(separator).join(genes);
         return cachedScore == null ? string : String.format("[%s] %s", cachedScore, string);
+    }
+
+    /**
+     * return the genes which differ between this and the given strain.
+     * 
+     * The first object in the difference ({@link Pair}) will be the index of the difference. The second object in the
+     * difference ({@link Pair}) will be the different gene from the 'other' parameter's sequence.
+     * 
+     * @param other
+     *            the gene sequence to compare to
+     * @return a collection of differences
+     */
+    public Collection<Pair<Integer, IGene<?>>> diff(final GeneSequence other) {
+        final List<Pair<Integer, IGene<?>>> diff = Lists.newArrayList();
+        assert size() == other.size();
+        for (int i = 0; i < size(); i++) {
+            final IGene<?> geneA = getGene(i);
+            final IGene<?> geneB = other.getGene(i);
+            if (!geneA.equals(geneB)) {
+                diff.add(new Pair<Integer, IGene<?>>(Integer.valueOf(i), geneB));
+            }
+        }
+        return diff;
+    }
+
+    /**
+     * method for getting the single difference between two genes. If there are any fewer or more than one difference an
+     * IllegalArgumentException is thown
+     * 
+     * @param mutation
+     * @return the single difference
+     * @throws IllegalArgumentException
+     */
+    public Pair<Integer, IGene<?>> onlyDiff(final GeneSequence other) throws IllegalArgumentException {
+        final Collection<Pair<Integer, IGene<?>>> diff = diff(other);
+        return Iterables.getOnlyElement(diff);
+    }
+
+    public void setGene(final int index, final IGene<?> newGene) {
+        genes.set(index, newGene);
     }
 }

@@ -8,8 +8,8 @@ public class Probability {
 
     private static Probability instance;
 
-    private static final float DEFAULT_MUTATION  = .0015F;
-    private static final float DEFAULT_CROSSOVER = .7F;
+    public static final float  DEFAULT_MUTATION  = .0015F;
+    public static final float  DEFAULT_CROSSOVER = .7F;
 
     public static final float  ALWAYS            = 1.0F;
     public static final float  NEVER             = 0.0F;
