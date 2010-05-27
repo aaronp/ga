@@ -11,4 +11,9 @@ public interface IGenePool extends Iterable<GeneSequence> {
 
     void populate(GeneSequence seq);
 
+    /**
+     * thin out this gene pool
+     */
+    void thinPopulation();
+
 }

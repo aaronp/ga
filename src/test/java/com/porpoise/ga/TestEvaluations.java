@@ -1,5 +1,7 @@
 package com.porpoise.ga;
 
+import com.porpoise.ga.Scores.ComparableScore;
+
 public enum TestEvaluations {
     ;
 
@@ -22,7 +24,8 @@ public enum TestEvaluations {
 
             @Override
             public IScore<Integer> score(final GeneSequence sequence) {
-                return Scores.valueOf(next++);
+                final ComparableScore<Integer> score = Scores.valueOf(next++);
+                return score;
             }
         };
     }

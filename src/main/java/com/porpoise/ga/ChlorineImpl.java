@@ -48,6 +48,7 @@ class ChlorineImpl<T> implements IChlorine {
         }
 
         // thin out the pool
+        newPool.thinPopulation();
 
         return newPool;
     }

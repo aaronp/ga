@@ -1,5 +1,6 @@
 package com.porpoise.ga.countdown;
 
+import com.google.common.base.Joiner;
 import com.porpoise.ga.GeneSequencer;
 import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
@@ -11,15 +12,41 @@ public class Main {
 
     @SuppressWarnings("boxing")
     public static void main(final String[] args) {
-        final int target = 42;
-        final Integer[] numbers = { 7, 8, 2, 1 };
+        // final int target = 42;
+        // final Integer[] numbers = { 7, 8, 2, 1 };
+        final int target = 592;
+        final Integer[] numbers = { 7, 8, 2, 1, 9, 3 };
+
+        doit(target, numbers);
+    }
+
+    /**
+     * @param target
+     * @param numbers
+     */
+    private static void doit(final int target, final Integer[] numbers) {
+        final long start = System.currentTimeMillis();
+        System.out.println(String.format("Looking for %d in %s:", target, Joiner.on(",").join(numbers)));
+        final Result result = solve(target, numbers);
+        final long done = System.currentTimeMillis() - start;
+        System.out.println(String.format("took %dms", done));
+        System.out.println(result);
+    }
+
+    /**
+     * @param target
+     * @param numbers
+     * @return
+     */
+    private static Result solve(final int target, final Integer[] numbers) {
         final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
 
         final GeneSequencer seq = createSequencer(numbers);
 
-        final IGenePool original = seq.newPool(eval, numbers.length * 4);
+        final int poolSize = numbers.length * Operator.values().length;
+        final IGenePool original = seq.newPool(eval, poolSize);
         final Result result = new GeneticAlgorithm<Integer>(eval).solve(original);
-        System.out.println(result);
+        return result;
     }
 
     /**

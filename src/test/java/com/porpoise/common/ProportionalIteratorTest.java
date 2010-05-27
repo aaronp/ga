@@ -20,7 +20,7 @@ public class ProportionalIteratorTest {
             values.add(Integer.valueOf(i));
         }
         final Set<Integer> uniqueElms = Sets.newHashSet();
-        final ProportionalIterator<Integer> iter = new ProportionalIterator<Integer>(p, values);
+        final ProportionalIterator<Integer> iter = ProportionalIterator.<Integer> ascending(p, values);
         while (iter.hasNext()) {
             final Integer elm = iter.next();
             System.out.println(elm);

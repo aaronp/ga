@@ -53,6 +53,11 @@ public enum Scores {
         public T getValue() {
             return value;
         }
+
+        @Override
+        public String toString() {
+            return value == null ? "null" : value.toString();
+        }
     }
 
     /**

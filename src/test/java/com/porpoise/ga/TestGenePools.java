@@ -2,10 +2,11 @@ package com.porpoise.ga;
 
 public enum TestGenePools {
 
-    ;
+    ; // uninstantiable
 
-    public static IGenePool alphaNumeric(final IGeneEvaluation criteria, final int size) {
+    @SuppressWarnings("unchecked")
+    public static GenePool<Integer> alphaNumeric(final IGeneEvaluation<Integer> criteria, final int size) {
         final GeneSequencer seq = TestSequencers.alphaNumeric();
-        return seq.newPool(criteria, size);
-    }// uninstantiable
+        return (GenePool<Integer>) seq.newPool(criteria, size);
+    }
 }

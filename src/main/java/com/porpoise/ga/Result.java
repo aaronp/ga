@@ -22,7 +22,8 @@ public class Result {
 
     @Override
     public String toString() {
-        return Joiner.on(String.format("%n")).join(getSolution().getGenes());
+        return String.format("Generation %d:%n%s", Integer.valueOf(getGeneration()), Joiner.on(String.format(" "))
+                .join(getSolution().getGenes()));
     }
 
 }

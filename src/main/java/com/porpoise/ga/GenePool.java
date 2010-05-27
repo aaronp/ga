@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.porpoise.common.Proportion;
 import com.porpoise.common.ProportionalIterator;
 
@@ -19,16 +21,16 @@ class GenePool<T extends Comparable<T>> implements IGenePool {
 
     private GeneSequence                   cachedSolution = null;
     private List<GeneSequence>             cachedSortedPopulation;
-    private final Proportion               proportion;
+    private Probability                    probability;
 
     public GenePool(final IGeneEvaluation<T> eval) {
-        this(eval, Probability.getInstance().getDefaultPoolProportion());
+        this(eval, Probability.getInstance());
 
     }
 
-    public GenePool(final IGeneEvaluation<T> eval, final Proportion poolProportion) {
+    public GenePool(final IGeneEvaluation<T> eval, final Probability prob) {
         geneEvaluation = eval;
-        this.proportion = poolProportion;
+        this.probability = prob;
         population = Lists.newLinkedList();
         final Comparator<GeneSequence> increasing = new Comparator<GeneSequence>() {
             @Override
@@ -70,10 +72,48 @@ class GenePool<T extends Comparable<T>> implements IGenePool {
     @Override
     public Iterator<GeneSequence> iterator() {
         if (cachedSortedPopulation == null) {
-            cachedSortedPopulation = population;
+            cachedSortedPopulation = Lists.newArrayListWithExpectedSize(population.size());
+            // sequences are sorted on score, so ensure they are all scored first
+            for (final GeneSequence s : population) {
+                s.getScore(geneEvaluation);
+                cachedSortedPopulation.add(s);
+            }
             Collections.sort(cachedSortedPopulation, seqComparator);
         }
-        return new ProportionalIterator<GeneSequence>(proportion, cachedSortedPopulation);
+        return ProportionalIterator.ascending(probability.getPoolProportion(), cachedSortedPopulation);
+    }
+
+    @Override
+    public void thinPopulation() {
+
+        final SortedSet<Integer> indices = getIndicesToRemove();
+
+        // iterate over indices, largest first
+        Integer last = null;
+        for (final Integer index : indices) {
+            assert last == null || last.intValue() > index.intValue();
+
+            final GeneSequence remove = population.remove(index.intValue());
+            assert remove != null;
+
+            last = index;
+        }
+    }
+
+    /**
+     * @return a sorted set of indices to cull from the population, largest first
+     */
+    final SortedSet<Integer> getIndicesToRemove() {
+        final int size = population.size();
+        final int amountToCull = probability.nextNumberToThin(size);
+        final Proportion proportion = probability.getPoolProportion();
+
+        final SortedSet<Integer> indices = Sets.newTreeSet(Ordering.natural().reverse());
+        while (indices.size() < amountToCull) {
+            final int index = proportion.chooseAscending(size);
+            indices.add(Integer.valueOf(index));
+        }
+        return indices;
     }
 
     /**

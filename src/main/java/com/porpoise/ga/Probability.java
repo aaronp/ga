@@ -14,13 +14,28 @@ public class Probability {
     public static final float  ALWAYS            = 1.0F;
     public static final float  NEVER             = 0.0F;
 
+    private final float        minTrimPercentage = 0.2F;
+    private final float        maxTrimPercentage = 0.5F;
+
     private final float        crossProbability;
     private final float        mutateProbability;
     private final Random       rand              = new Random();
 
+    private final Proportion   defaultPoolProportion;
+
     public Probability(final float cross, final float mutate) {
+        this(cross, mutate, Proportion.with(30, 50).and(40, 40).build());
+    }
+
+    public Probability(final float cross, final float mutate, final Proportion genePoolProportion) {
         crossProbability = cross;
         mutateProbability = mutate;
+        defaultPoolProportion = genePoolProportion;
+
+        if (defaultPoolProportion == null) {
+            throw new NullPointerException("defaultPoolProportion");
+        }
+
         assert cross >= NEVER;
         assert mutate >= NEVER;
         assert cross <= ALWAYS;
@@ -88,8 +103,32 @@ public class Probability {
                 Float.valueOf(mutateProbability * 100));
     }
 
-    public Proportion getDefaultPoolProportion() {
-        // top 30% 50% of the time, next 40% 40% of the time and the last 30%
-        return Proportion.with(30, 50).and(40, 40).build();
+    public Proportion getPoolProportion() {
+        return defaultPoolProportion;
+    }
+
+    public int nextNumberToThin(final int size) {
+        final float minPercent = minTrimPercentage;
+        final float maxPercent = maxTrimPercentage;
+        return nextNumberToThin(minPercent, maxPercent, size);
+    }
+
+    /**
+     * @param minPercent
+     * @param maxPercent
+     * @param size
+     * @return
+     */
+    public int nextNumberToThin(final float minPercent, final float maxPercent, final int size) {
+        if (minPercent < 0.0F || minPercent > 1.0F) {
+            throw new IllegalArgumentException("min must be between 0.0 and 1.0: " + minPercent);
+        }
+        if (maxPercent < 0.0F || maxPercent > 1.0F) {
+            throw new IllegalArgumentException("max must be between 0.0 and 1.0: " + maxPercent);
+        }
+        final float percentage = rand.nextFloat() * (maxPercent - minPercent);
+
+        final int result = (int) ((minPercent + percentage) * size);
+        return result;
     }
 }

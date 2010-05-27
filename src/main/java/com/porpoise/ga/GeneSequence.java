@@ -8,15 +8,30 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-public class GeneSequence implements Iterable<IGene<?>> {
+/**
+ * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific
+ * solution.
+ * 
+ * The sequence is expected to be interpreted by an {@link IGeneEvaluation} object, resulting in a {@link IScore} being
+ * given to this sequence by which it can be rated against other gene sequence strains.
+ */
+public final class GeneSequence implements Iterable<IGene<?>> {
 
     private IScore<?>            cachedScore;
     private final List<IGene<?>> genes;
 
+    /**
+     * @param geneValues
+     *            the gene values used to build this sequence
+     */
     public GeneSequence(final Iterable<IGene<?>> geneValues) {
         this(Lists.newArrayList(geneValues));
     }
 
+    /**
+     * @param geneValues
+     *            the gene values used to build this sequence
+     */
     public GeneSequence(final IGene<?>... geneValues) {
         this(Arrays.asList(geneValues));
     }
@@ -40,15 +55,28 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return ImmutableList.<IGene<?>> copyOf(genes);
     }
 
+    /**
+     * @return an iterator which may iterate over the genes in this list
+     */
     @Override
     public Iterator<IGene<?>> iterator() {
-        return genes.iterator();
+        return getGenes().iterator();
     }
 
+    /**
+     * @return the number of genes in this sequence
+     */
     public int size() {
         return genes.size();
     }
 
+    /**
+     * cross this sequence with another, resulting in two offspring
+     * 
+     * @param other
+     *            the other sequence with which to cross with this sequence
+     * @return the offspring resulting from the 'breeding' (crossing) of these two sequences
+     */
     public Offspring cross(final GeneSequence other) {
         final Probability probability = Probability.getInstance();
         final int pos = probability.nextInt(size());
@@ -56,11 +84,15 @@ public class GeneSequence implements Iterable<IGene<?>> {
     }
 
     /**
+     * cross this sequence with another at the given index
+     * 
      * @param other
+     *            the other sequence with which to cross with this one
      * @param pos
-     * @return
+     *            the position at which the sequences will be crossed
+     * @return the offspring from the cross
      */
-    Offspring cross(final GeneSequence other, final int pos) {
+    public Offspring cross(final GeneSequence other, final int pos) {
         assert size() == other.size();
 
         final List<IGene<?>> copyOne = Lists.newArrayList(genes);
@@ -77,9 +109,9 @@ public class GeneSequence implements Iterable<IGene<?>> {
     }
 
     /**
-     * mutate the gene sequence, altering one gene in the sequence
+     * mutate the gene sequence, altering one gene in the sequence randomly
      * 
-     * @return the mutated gene sequence
+     * @return a new mutated gene sequence created from this sequence
      */
     public GeneSequence mutate() {
         final Probability probability = Probability.getInstance();
@@ -88,9 +120,10 @@ public class GeneSequence implements Iterable<IGene<?>> {
 
     /**
      * @param probability
-     * @return
+     *            the probability (random) object used to determine the gene which will be mutated
+     * @return a new mutated gene sequence created from this sequence
      */
-    GeneSequence mutate(final Probability probability) {
+    public GeneSequence mutate(final Probability probability) {
         final int pos = probability.nextInt(genes.size());
         final List<IGene<?>> copy = Lists.newArrayList(genes);
         final IGene<?> mutated = copy.get(pos).mutate(probability.nextFloat());
@@ -98,6 +131,11 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return new GeneSequence(copy);
     }
 
+    /**
+     * 
+     * @param <T>
+     * @param type
+     */
     final <T> void addGene(final Genotype<T> type) {
         markDirty();
         final int position = genes.size();
@@ -132,9 +170,7 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return (IScore<T>) cachedScore;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -145,9 +181,7 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -172,8 +206,21 @@ public class GeneSequence implements Iterable<IGene<?>> {
         return true;
     }
 
+    /**
+     * @return the string representation of these sequence
+     */
     @Override
     public String toString() {
-        return Joiner.on("-").join(genes);
+        final String separator = "-";
+        return toString(separator);
+    }
+
+    /**
+     * @param separator
+     * @return a string representation of this sequence
+     */
+    public String toString(final String separator) {
+        final String string = Joiner.on(separator).join(genes);
+        return cachedScore == null ? string : String.format("[%s] %s", cachedScore, string);
     }
 }

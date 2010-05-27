@@ -33,10 +33,39 @@ public class ProportionalIterator<T> implements Iterator<T> {
 
     private final List<T>    sortedListBestFirst;
     private final Proportion proportion;
+    private final boolean    ascending;
 
-    public ProportionalIterator(final Proportion prop, final Iterable<T> sortedListBestFirstValue) {
+    /**
+     * @param <T>
+     * @param prop
+     * @param sortedListBestFirstValue
+     * @return a new iterator
+     */
+    public static <T> ProportionalIterator<T> ascending(final Proportion prop,
+            final Iterable<T> sortedListBestFirstValue) {
+        return create(prop, sortedListBestFirstValue, true);
+    }
+
+    /**
+     * @param <T>
+     * @param prop
+     * @param sortedListBestFirstValue
+     * @return a new iterator
+     */
+    public static <T> ProportionalIterator<T> descending(final Proportion prop,
+            final Iterable<T> sortedListBestFirstValue) {
+        return create(prop, sortedListBestFirstValue, false);
+    }
+
+    private static <T> ProportionalIterator<T> create(final Proportion prop,
+            final Iterable<T> sortedListBestFirstValue, final boolean asc) {
+        return new ProportionalIterator<T>(prop, sortedListBestFirstValue, asc);
+    }
+
+    private ProportionalIterator(final Proportion prop, final Iterable<T> sortedListBestFirstValue, final boolean asc) {
         this.proportion = prop;
         sortedListBestFirst = Lists.newArrayList(sortedListBestFirstValue);
+        ascending = asc;
     }
 
     @Override
@@ -52,7 +81,12 @@ public class ProportionalIterator<T> implements Iterator<T> {
         if (sortedListBestFirst.size() == 1) {
             return sortedListBestFirst.remove(0);
         }
-        final int index = proportion.chooseAscending(sortedListBestFirst.size());
+        final int index;
+        if (ascending) {
+            index = proportion.chooseAscending(sortedListBestFirst.size());
+        } else {
+            index = proportion.chooseDescending(sortedListBestFirst.size());
+        }
         assert index < sortedListBestFirst.size();
         return sortedListBestFirst.remove(index);
     }
