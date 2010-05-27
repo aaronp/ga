@@ -59,7 +59,7 @@ class GenePool<T extends Comparable<T>> implements IGenePool {
             GeneSequence solution = null;
             for (final GeneSequence sequence : this) {
                 final IScore<T> score = geneEvaluation.score(sequence);
-                if (score.isComplete()) {
+                if (score.isComplete() && score.isValid()) {
                     solution = sequence;
                     break;
                 }

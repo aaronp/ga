@@ -2,7 +2,13 @@ package com.porpoise.ga;
 
 import java.util.Iterator;
 
-class ChlorineImpl implements IChlorine {
+/**
+ * Implementation of {@link IChlorine}
+ * 
+ * This class is able to take a n {@link IGenePool} and transform ('evolve') it into another
+ * 
+ */
+public class ChlorineImpl implements IChlorine {
 
     private final Probability probability;
 
@@ -24,7 +30,8 @@ class ChlorineImpl implements IChlorine {
             // if we have an odd number in our gene pool then we may need to terminate early
             if (!iter.hasNext()) {
                 if (probability.nextMutate()) {
-                    newPool.populate(seqOne.mutate(probability));
+                    final GeneSequence newSeq = mutate(seqOne);
+                    newPool.populate(newSeq);
                 } else {
                     newPool.populate(seqOne);
                 }
@@ -49,10 +56,18 @@ class ChlorineImpl implements IChlorine {
 
     /**
      * @param seqOne
+     * @return
+     */
+    protected GeneSequence mutate(final GeneSequence seqOne) {
+        return seqOne.mutate(probability);
+    }
+
+    /**
+     * @param seqOne
      * @param seqTwo
      * @return
      */
-    private Offspring getOffspring(final GeneSequence seqOne, final GeneSequence seqTwo) {
+    protected Offspring getOffspring(final GeneSequence seqOne, final GeneSequence seqTwo) {
         final Offspring offspring;
         if (probability.nextCross()) {
             offspring = seqOne.cross(probability, seqTwo);

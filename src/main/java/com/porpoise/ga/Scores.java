@@ -7,9 +7,15 @@ public enum Scores {
         private final T value;
         private Boolean isComplete;
         private T       targetValue;
+        private Boolean isValid;
 
         public ComparableScore<T> setTarget(final T target) {
             targetValue = target;
+            return this;
+        }
+
+        public ComparableScore<T> setValid(final boolean valid) {
+            isValid = Boolean.valueOf(valid);
             return this;
         }
 
@@ -35,6 +41,9 @@ public enum Scores {
 
         @Override
         public boolean isValid() {
+            if (isValid != null) {
+                return isValid.booleanValue();
+            }
             return value != null;
         }
 

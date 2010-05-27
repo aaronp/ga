@@ -4,6 +4,7 @@ import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IScore;
 import com.porpoise.ga.Scores;
+import com.porpoise.ga.Scores.ComparableScore;
 
 class CountdownEvaluation implements IGeneEvaluation<Integer> {
 
@@ -21,14 +22,14 @@ class CountdownEvaluation implements IGeneEvaluation<Integer> {
         }
 
         final int resultValue = result.intValue();
-        return score(resultValue);
+        return score(resultValue).setValid(FormulaDecoder.isValid(sequence));
     }
 
     /**
      * @param resultValue
      * @return
      */
-    final IScore<Integer> score(final int resultValue) {
+    final ComparableScore<Integer> score(final int resultValue) {
         final int diff = Math.abs(resultValue - target);
         return Scores.valueOf(diff).setComplete(diff == 0);
     }

@@ -1,9 +1,12 @@
 package com.porpoise.ga.countdown;
 
 import com.google.common.base.Joiner;
+import com.porpoise.ga.ChlorineImpl;
+import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.GeneSequencer;
 import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
+import com.porpoise.ga.IChlorine;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
 import com.porpoise.ga.Probability;
@@ -15,8 +18,8 @@ public class Main {
     public static void main(final String[] args) {
         // final int target = 42;
         // final Integer[] numbers = { 7, 8, 2, 1 };
-        final int target = 592;
-        final Integer[] numbers = { 7, 8, 2, 1, 9, 3, 14, 11 };
+        final int target = 396;
+        final Integer[] numbers = { 7, 8, 2, 1, 9, 3, 5 };
 
         doit(target, numbers);
     }
@@ -40,15 +43,63 @@ public class Main {
      * @return
      */
     private static Result solve(final int target, final Integer[] numbers) {
+
+        //
+        // the probability object is really a configuration or probabilities (cross rates, cull rates, mutations, ...).
+        // here we use the default configuration
+        //
         final Probability config = Probability.getInstance();
 
-        final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
-        final GeneSequencer seq = createSequencer(numbers);
+        // all our algorithm really needs is an initial gene pool,
+        // as the gene pool knows how to maintain (cull) itself
+        final IGenePool original;
+        {
+            //
+            // We'll use a GeneSequencer to create our gene pool.
+            // 
+            // To create a sequencer, we will have to provide it with a IGeneEvaluation instance
+            // which will be used to 'judge' which solutions are better than others
+            //
+            final IGeneEvaluation<Integer> eval = new CountdownEvaluation(target);
 
-        final int poolSize = numbers.length * Operator.values().length;
-        final IGenePool original = seq.newPool(eval, poolSize);
-        final Result result = new GeneticAlgorithm(config).solve(original);
+            //
+            // create a gene sequencer which will be able to build
+            // [num op]+ num sequences, such as 1 + 2 / 3 * 4 - 5
+            //
+            final int someInitialPoolSize = numbers.length * Operator.values().length;
+            final GeneSequencer seq = createSequencer(numbers);
+            // ... and use that sequence to create an initial gene pool of a given size
+            original = seq.newPool(eval, someInitialPoolSize);
+        }
+
+        //
+        // all is left to do is create a genetic algoritm instance and ask
+        // it to solve our problem
+        //
+        final GeneticAlgorithm ga = newAlgorithm(config);
+        final Result result = ga.solve(original);
         return result;
+    }
+
+    /**
+     * @param config
+     * @return a new genetic algorithm based on the given configuration
+     */
+    private static GeneticAlgorithm newAlgorithm(final Probability config) {
+
+        // The algorithm uses an IChlorine instance which is responsible
+        // for 'evolving' the gene pool through each generation
+        final IChlorine chlorine = new ChlorineImpl(config) {
+            @Override
+            protected GeneSequence mutate(final GeneSequence seqOne) {
+                final GeneSequence mutation = super.mutate(seqOne);
+                // TODO - don't create invalid mutations
+                return mutation;
+            }
+        };
+
+        // new GeneticAlgorithm(config);
+        return new GeneticAlgorithm(chlorine);
     }
 
     /**
