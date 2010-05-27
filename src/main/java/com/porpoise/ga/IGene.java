@@ -14,6 +14,13 @@ public interface IGene<T> {
     T getValue();
 
     /**
+     * The type of this gene.
+     * 
+     * @return the gene's type
+     */
+    Object getType();
+
+    /**
      * @return the zero-based position (index)
      */
     int getPosition();

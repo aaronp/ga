@@ -22,8 +22,8 @@ public class Main {
     public static void main(final String[] args) {
         // final int target = 42;
         // final Integer[] numbers = { 7, 8, 2, 1 };
-        final int target = 96;
-        final Integer[] numbers = { 7, 8, 2, 3 };
+        final int target = 21;
+        final Integer[] numbers = { 7, 8, 2, 3, 1 };
 
         doit(target, numbers);
     }
@@ -38,7 +38,7 @@ public class Main {
         final Result result = solve(target, numbers);
         final long done = System.currentTimeMillis() - start;
         System.out.println(String.format("took %dms", done));
-        System.out.println(result);
+        System.out.println(result == null ? "no solution found" : result);
     }
 
     /**
@@ -77,11 +77,11 @@ public class Main {
         }
 
         //
-        // all is left to do is create a genetic algoritm instance and ask
+        // all is left to do is create a genetic algorithm instance and ask
         // it to solve our problem
         //
         final GeneticAlgorithm ga = newAlgorithm(config);
-        final Result result = ga.solve(original);
+        final Result result = ga.solve(original, 50);
         return result;
     }
 
@@ -92,7 +92,7 @@ public class Main {
     private static GeneticAlgorithm newAlgorithm(final Probability config) {
 
         // TODO - use the other one we created elsewhere
-        final Genotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
+        final Genotype<Integer> numberType = Genotype.withType("number").of(Integer.valueOf(1));
 
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
