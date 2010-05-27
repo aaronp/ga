@@ -11,26 +11,65 @@ import org.junit.Test;
  */
 public class GeneSequenceTest {
 
-    @Test
-    public void test_swap() {
-        final GeneSequencer sequencer = TestSequencers.alphaNumeric(10);
-        final GeneSequence a = sequencer.create();
-        final GeneSequence b = sequencer.create();
-        a.crossBySwap(Probability.getInstance(), b);
+    // important that we have two types with overlapping values (but they are different types),
+    // and that their values are bound to repeat within a sequence ('cause they appear 3 times per sequence, but only
+    // have 2 values to choose from)
+    final Genotype<Integer> type1     = Genotype.of(1, 2);
+    final Genotype<Integer> type2     = Genotype.of(2, 3);
+    final Genotype<String>  type3     = Genotype.of("a", "b", "c");
 
+    // create a sequencer which repeats - three of each type
+    final GeneSequencer     sequencer = new GeneSequencer(//
+                                              type1, type2, type3, //
+                                              type1, type2, type3,// 
+                                              type1, type2, type3//
+                                      );
+
+    /**
+     * tests for {@link GeneSequence#getGenesByValue(Object)}
+     */
+    @Test
+    public void test_getGenesByValue() {
+        final GeneSequence seq1 = sequencer.create();
+        final IGene<?> firstGene = seq1.getGene(0);
+        final Object value = firstGene.getValue();
+        final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
+        Assert.assertTrue(genes.contains(firstGene));
+        final IGenotype type = firstGene.getType();
+        for (final IGene<?> g : genes) {
+            Assert.assertEquals(value, g.getValue());
+            Assert.assertEquals(type, g.getType());
+        }
     }
+
+    /**
+     * tests for {@link GeneSequence#getGenesByValue(Object)}
+     */
+//    @Test
+//    public void test_getGenesByValue() {
+//        final GeneSequence seq1 = sequencer.create();
+//        final IGene<?> firstGene = seq1.getGene(0);
+//        final Object value = firstGene.getValue();
+//        final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
+//        Assert.assertTrue(genes.contains(firstGene));
+//        final IGenotype type = firstGene.getType();
+//        for (final IGene<?> g : genes) {
+//            Assert.assertEquals(value, g.getValue());
+//            Assert.assertEquals(type, g.getType());
+//        }
+//    }
 
     /**
      * Test for the {@link GeneSequence#diff(GeneSequence)} method
      */
     @Test
     public void test_diff() {
-        final GeneSequencer sequencer = TestSequencers.alphaNumeric();
+        final GeneSequencer sqncr = TestSequencers.alphaNumeric();
 
         //
         // use our sequencer to create two sequences
         //
-        final GeneSequence seq1 = sequencer.create();
+        final GeneSequence seq1 = sqncr.create();
         final GeneSequence seq2 = seq1.mutate();
 
         final Collection<Pair<Integer, IGene<?>>> differences = seq1.diff(seq2);
