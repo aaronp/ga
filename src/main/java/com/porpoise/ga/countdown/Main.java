@@ -92,7 +92,7 @@ public class Main {
     private static GeneticAlgorithm newAlgorithm(final Probability config) {
 
         // TODO - use the other one we created elsewhere
-        final Genotype<Integer> numberType = Genotype.withType("number").of(Integer.valueOf(1));
+        final Genotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
 
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation

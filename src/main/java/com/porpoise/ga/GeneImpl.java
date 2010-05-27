@@ -13,8 +13,8 @@ public class GeneImpl<T> implements IGene<T> {
     }
 
     @Override
-    public Object getType() {
-        return genotype.getType();
+    public IGenotype getType() {
+        return genotype;
     }
 
     @Override

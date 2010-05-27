@@ -18,7 +18,7 @@ public interface IGene<T> {
      * 
      * @return the gene's type
      */
-    Object getType();
+    IGenotype getType();
 
     /**
      * @return the zero-based position (index)
