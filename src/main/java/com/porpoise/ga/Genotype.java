@@ -2,7 +2,9 @@ package com.porpoise.ga;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.porpoise.common.RandomizingIter;
 
@@ -34,11 +36,15 @@ public class Genotype<T> extends AbstractGenotype<T> {
      * @param values
      * @return a genotype which will repeat the given values in a random order
      */
-    public static <T> IGenotype<T> ofFixedOrder(final T... values) {
-        return of(Arrays.asList(values));
+    public static <T> IGenotype<T> withFixedOrder(final T... values) {
+        return new Genotype<T>(Iterators.cycle(values));
     }
 
     private Genotype(final Iterable<T> values) {
-        super(new RandomizingIter<T>(Lists.newArrayList(values)));
+        this(new RandomizingIter<T>(Lists.newArrayList(values)));
+    }
+
+    private Genotype(final Iterator<T> values) {
+        super(values);
     }
 }

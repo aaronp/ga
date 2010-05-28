@@ -4,14 +4,15 @@ package com.porpoise.ga;
 public enum TestSequencers {
     ;// uninstantiable
 
-    private static final Genotype<Integer> integerGenotype = Genotype.of(1, 2, 3, 4, 5, 6);
-    private static final Genotype<String> characterGenotype = Genotype.of("a", "b", "c");
+    @SuppressWarnings("boxing")
+    private static final IGenotype<Integer> integerGenotype = Genotype.of(1, 2, 3, 4, 5, 6);
+    private static final IGenotype<String> characterGenotype = Genotype.of("a", "b", "c");
     
-    public static Genotype<Integer> integers()
+    public static IGenotype<Integer> integers()
     {
         return integerGenotype;
     }
-    public static Genotype<String> characters()
+    public static IGenotype<String> characters()
     {
         return characterGenotype;
     }

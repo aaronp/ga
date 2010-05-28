@@ -14,16 +14,18 @@ public class GeneSequenceTest {
     // important that we have two types with overlapping values (but they are different types),
     // and that their values are bound to repeat within a sequence ('cause they appear 3 times per sequence, but only
     // have 2 values to choose from)
-    final Genotype<Integer> type1     = Genotype.of(1, 2);
-    final Genotype<Integer> type2     = Genotype.of(2, 3);
-    final Genotype<String>  type3     = Genotype.of("a", "b", "c");
+    @SuppressWarnings("boxing")
+    final IGenotype<Integer> type1     = Genotype.of(1, 2);
+    @SuppressWarnings("boxing")
+    final IGenotype<Integer> type2     = Genotype.of(2, 3);
+    final IGenotype<String>  type3     = Genotype.of("a", "b", "c");
 
     // create a sequencer which repeats - three of each type
-    final GeneSequencer     sequencer = new GeneSequencer(//
-                                              type1, type2, type3, //
-                                              type1, type2, type3,// 
-                                              type1, type2, type3//
-                                      );
+    final GeneSequencer      sequencer = new GeneSequencer(//
+                                               type1, type2, type3, //
+                                               type1, type2, type3,// 
+                                               type1, type2, type3//
+                                       );
 
     /**
      * tests for {@link GeneSequence#getGenesByValue(Object)}
@@ -35,7 +37,7 @@ public class GeneSequenceTest {
         final Object value = firstGene.getValue();
         final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
         Assert.assertTrue(genes.contains(firstGene));
-        final IGenotype type = firstGene.getType();
+        final IGenotype<?> type = firstGene.getType();
         assertTypeAndValue(genes, value, type);
     }
 
@@ -46,7 +48,7 @@ public class GeneSequenceTest {
     public void test_getGenesByType() {
         final GeneSequence seq1 = sequencer.create();
         final IGene<?> firstGene = seq1.getGene(1);
-        final IGenotype type = firstGene.getType();
+        final IGenotype<?> type = firstGene.getType();
         final Collection<IGene<?>> genes = seq1.getGenesByType(type);
         Assert.assertTrue(genes.contains(firstGene));
         for (final IGene<?> g : genes) {
@@ -94,7 +96,7 @@ public class GeneSequenceTest {
      * @param value
      * @param type
      */
-    private void assertTypeAndValue(final Collection<IGene<?>> genes, final Object value, final IGenotype type) {
+    private void assertTypeAndValue(final Collection<IGene<?>> genes, final Object value, final IGenotype<?> type) {
         for (final IGene<?> g : genes) {
             Assert.assertEquals(value, g.getValue());
             Assert.assertEquals(type, g.getType());
@@ -111,29 +113,20 @@ public class GeneSequenceTest {
         System.out.println(swapped);
     }
 
+    @SuppressWarnings("boxing")
     @Test
     public void test_swapUnique() {
 
-        final GeneSequence seq1 = new GeneSequence();
-        int index = 0;
-        seq1.addGene(new GeneImpl<Integer>(numbers, index++, Integer.valueOf(1)));
-        final GeneSequence seq2 = new GeneSequence();
+        final GeneSequencer seqncr1 = new GeneSequencer(//
+                Genotype.withFixedOrder(1, 2, 3, 4),// 
+                Genotype.of("a", "b", "c"),//
+                Genotype.withFixedOrder(1, 2, 3, 4)// 
+        );
 
-        //
-        // between the two sequences, there will be one number shared. find that index
-        //
-        int pos = -1;
-        final Collection<IGene<?>> g1 = seq1.getGenesByType(t1);
-        for (final IGene<?> g : g1) {
-            final IGene<?> gene = seq2.getGeneOfTypeAndValue(t1, g.getValue());
-            if (gene != null) {
-                pos = g.getPosition();
-                break;
-            }
-        }
-        if (pos == -1) {
-            return;
-        }
+        final GeneSequence seq1 = seqncr1.create();
+        final GeneSequence seq2 = seqncr1.create();
+
+        final int pos = 0;
         System.out.println("********swap***********");
         System.out.println(seq1);
         System.out.println(seq2);

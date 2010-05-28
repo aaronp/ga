@@ -1,6 +1,5 @@
 package com.porpoise.ga.countdown;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,11 +51,5 @@ public class CountdownEvaluationTest {
         final IScore<Integer> s = eval.score(resultValue);
         Assert.assertEquals(Integer.valueOf(expectedScoreValue), s.getValue());
         return s;
-    }
-
-    private void assertEquals(final float f, final float value) {
-        final boolean equals = new BigDecimal(f).compareTo(new BigDecimal(value)) == 0;
-        Assert.assertTrue(String.format("%s != %s", f, value), equals);
-
     }
 }

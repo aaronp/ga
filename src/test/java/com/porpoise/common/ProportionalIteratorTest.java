@@ -27,6 +27,6 @@ public class ProportionalIteratorTest {
             final boolean added = uniqueElms.add(elm);
             Assert.assertTrue(added);
         }
-        Assert.assertEquals(size, uniqueElms.size());
+        Assert.assertEquals(Integer.valueOf(size), Integer.valueOf(uniqueElms.size()));
     }
 }
