@@ -103,37 +103,77 @@ public class GeneSequenceTest {
         }
     }
 
-    @Test
-    public void test_swap() {
-        final GeneSequence seq1 = sequencer.create();
-        final GeneSequence seq2 = sequencer.create();
-        final Offspring swapped = seq1.crossBySwap(1, seq2);
-        System.out.println(seq1);
-        System.out.println(seq2);
-        System.out.println(swapped);
-    }
-
+    /**
+     * test for {@link GeneSequence#crossBySwapUniqueValuesInType(int, GeneSequence)}
+     */
     @SuppressWarnings("boxing")
     @Test
     public void test_swapUnique() {
 
+        //
+        // create two sequences (we can be sure about the number order):
+        //
+        // 1-a-3-2-5
+        // 2-b-1-3-4
+        //
+        final IGenotype<Integer> numbers = Genotype.withFixedOrder(//
+                1, 3, 2, 5,//
+                2, 1, 3, 4//
+                );
         final GeneSequencer seqncr1 = new GeneSequencer(//
-                Genotype.withFixedOrder(1, 2, 3, 4),// 
+                numbers,// 
                 Genotype.of("a", "b", "c"),//
-                Genotype.withFixedOrder(1, 2, 3, 4)// 
+                numbers,// 
+                numbers,// 
+                numbers// 
         );
 
+        // assert the expected number order:
+        // 1-a-3-2-5
         final GeneSequence seq1 = seqncr1.create();
-        final GeneSequence seq2 = seqncr1.create();
+        Assert.assertEquals(1, seq1.getGeneIntValue(0));
+        Assert.assertEquals(3, seq1.getGeneIntValue(2));
+        Assert.assertEquals(2, seq1.getGeneIntValue(3));
+        Assert.assertEquals(5, seq1.getGeneIntValue(4));
 
-        final int pos = 0;
-        System.out.println("********swap***********");
-        System.out.println(seq1);
-        System.out.println(seq2);
-        System.out.println("swapping at pos " + pos);
+        // 2-b-1-3-4
+        final GeneSequence seq2 = seqncr1.create();
+        Assert.assertEquals(2, seq2.getGeneIntValue(0));
+        Assert.assertEquals(1, seq2.getGeneIntValue(2));
+        Assert.assertEquals(3, seq2.getGeneIntValue(3));
+        Assert.assertEquals(4, seq2.getGeneIntValue(4));
+
+        //
+        // now swap the genes at index 2
+        //
+        // 1-a-3-2-5
+        // 2-b-1-3-4
+        //
+        // should become
+        //
+        // 2-a-1-3-5
+        // 1-b-3-2-4
+        //
+        final int pos = 2;
+        // call the method under test
         final Offspring swapped = seq1.crossBySwapUniqueValuesInType(pos, seq2);
-        System.out.println(swapped);
-        System.out.println("********swap***********");
+
+        //
+        // assert the expected result
+        //
+        final GeneSequence offspringOne = swapped.getOffspringOne();
+        Assert.assertEquals(2, offspringOne.getGeneIntValue(0));
+        Assert.assertEquals(seq1.getGeneValue(1), offspringOne.getGeneValue(1));
+        Assert.assertEquals(1, offspringOne.getGeneIntValue(2));
+        Assert.assertEquals(3, offspringOne.getGeneIntValue(3));
+        Assert.assertEquals(5, offspringOne.getGeneIntValue(4));
+
+        final GeneSequence offspringTwo = swapped.getOffspringTwo();
+        Assert.assertEquals(1, offspringTwo.getGeneIntValue(0));
+        Assert.assertEquals(seq2.getGeneValue(1), offspringTwo.getGeneValue(1));
+        Assert.assertEquals(3, offspringTwo.getGeneIntValue(2));
+        Assert.assertEquals(2, offspringTwo.getGeneIntValue(3));
+        Assert.assertEquals(4, offspringTwo.getGeneIntValue(4));
     }
 
     /**
