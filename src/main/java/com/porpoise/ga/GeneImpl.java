@@ -28,7 +28,18 @@ public class GeneImpl<T> implements IGene<T> {
 
     @Override
     public IGene<T> mutate(final float random) {
-        return genotype.createGene(index);
+        IGene<T> other = genotype.createGene(index);
+        int guard = 0;
+        final int maxTries = 100;
+        while (other.getValue().equals(getValue())) {
+            other = genotype.createGene(index);
+            if (guard++ > maxTries) {
+                throw new IllegalStateException(String.format(
+                        "After %d tries the genotype %s has consistently returned a gene with the same value", Integer
+                                .valueOf(maxTries)));
+            }
+        }
+        return other;
     }
 
     @Override

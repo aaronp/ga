@@ -104,7 +104,7 @@ public class GeneSequenceTest {
     }
 
     /**
-     * test for {@link GeneSequence#crossBySwapUniqueValuesInType(int, GeneSequence)}
+     * test for {@link GeneSequence#crossBySwapUniqueValuesByType(int, GeneSequence)}
      */
     @SuppressWarnings("boxing")
     @Test
@@ -156,7 +156,7 @@ public class GeneSequenceTest {
         //
         final int pos = 2;
         // call the method under test
-        final Offspring swapped = seq1.crossBySwapUniqueValuesInType(pos, seq2);
+        final Offspring swapped = seq1.crossBySwapUniqueValuesByType(pos, seq2);
 
         //
         // assert the expected result

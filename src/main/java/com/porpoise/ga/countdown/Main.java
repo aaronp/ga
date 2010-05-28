@@ -1,19 +1,13 @@
 package com.porpoise.ga.countdown;
 
 import com.google.common.base.Joiner;
-import com.porpoise.ga.AbstractChlorine;
-import com.porpoise.ga.GeneImpl;
-import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.GeneSequencer;
 import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
 import com.porpoise.ga.IChlorine;
-import com.porpoise.ga.IGene;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
 import com.porpoise.ga.IGenotype;
-import com.porpoise.ga.Offspring;
-import com.porpoise.ga.Pair;
 import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
@@ -26,17 +20,20 @@ public class Main {
         final int target = 21;
         final Integer[] numbers = { 7, 8, 2, 3, 1 };
 
-        doit(target, numbers);
+        run(target, numbers);
     }
 
     /**
      * @param target
      * @param numbers
      */
-    private static void doit(final int target, final Integer[] numbers) {
+    @SuppressWarnings("boxing")
+    private static void run(final int target, final Integer[] numbers) {
         final long start = System.currentTimeMillis();
         System.out.println(String.format("Looking for %d in %s:", target, Joiner.on(",").join(numbers)));
+
         final Result result = solve(target, numbers);
+
         final long done = System.currentTimeMillis() - start;
         System.out.println(String.format("took %dms", done));
         System.out.println(result == null ? "no solution found" : result);
@@ -91,47 +88,9 @@ public class Main {
      * @return a new genetic algorithm based on the given configuration
      */
     private static GeneticAlgorithm newAlgorithm(final Probability config) {
-
-        // TODO - use the other one we created elsewhere
-        final IGenotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
-
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
-        final IChlorine chlorine = new AbstractChlorine(config) {
-            @Override
-            protected GeneSequence doMutate(final GeneSequence seqOne) {
-
-                final GeneSequence mutation = seqOne.mutate(getProbability());
-                if (false) {
-                    return mutation;
-                }
-
-                final Pair<Integer, IGene<?>> onlyDiff = seqOne.onlyDiff(mutation);
-                final IGene<?> newGene = onlyDiff.getSecond();
-
-                // if we've mutated a number, then swap it with the same number elsewhere
-                if (newGene.getValue() instanceof Integer) {
-                    final int mutatedValue = ((Integer) newGene.getValue()).intValue();
-                    final int mutatedValueIndex = onlyDiff.getFirst().intValue();
-                    for (int i = 0; i < mutation.size(); i += 2) {
-                        final int value = mutation.getGeneIntValue(i);
-                        if (value == mutatedValue && i != mutatedValueIndex) {
-                            final int swapValue = seqOne.getGeneIntValue(mutatedValueIndex);
-                            final IGene<?> swap = new GeneImpl<Integer>(numberType, i, Integer.valueOf(swapValue));
-                            mutation.setGene(i, swap);
-                            break;
-                        }
-                    }
-                }
-                return mutation;
-            }
-
-            @Override
-            protected Offspring doCross(final GeneSequence seqOne, final GeneSequence seqTwo) {
-                final Offspring offspring = seqOne.cross(getProbability(), seqTwo);
-                return offspring;
-            }
-        };
+        final IChlorine chlorine = new CountdownChlorine(config);
 
         // new GeneticAlgorithm(config);
         return new GeneticAlgorithm(chlorine);

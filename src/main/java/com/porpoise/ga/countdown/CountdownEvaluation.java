@@ -6,6 +6,11 @@ import com.porpoise.ga.IScore;
 import com.porpoise.ga.Scores;
 import com.porpoise.ga.Scores.ComparableScore;
 
+/**
+ * the evaluation used to determine the fitness of a gene sequence.
+ * 
+ * The sequence is evaluated as an equation, and its fitness is determined by it's distance from the target number.
+ */
 class CountdownEvaluation implements IGeneEvaluation<Integer> {
 
     private final int target;
