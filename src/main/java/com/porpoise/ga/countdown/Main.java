@@ -12,9 +12,9 @@ public class Main
     @SuppressWarnings("boxing")
     public static void main(final String[] args)
     {
-        final int target = 21;
+        final int target = 172;
 
-        final Integer[] numbers = { 7, 8, 2, 3, 1 };
+        final Integer[] numbers = { 7, 8, 2, 3, 1, 14, 9 };
         run(target, numbers);
     }
 
@@ -32,7 +32,18 @@ public class Main
 
         final long done = System.currentTimeMillis() - start;
         System.out.println(String.format("took %dms", done));
-        System.out.println(result == null ? "no solution found" : result);
+        if (result == null)
+        {
+            System.out.println("no solution found");
+        }
+        else
+        {
+            System.out.println(result);
+            System.out.println();
+            System.out.println("Workings:");
+            System.out.println(FormulaDecoder.toString(result.getSolution()));
+
+        }
     }
 
 }
