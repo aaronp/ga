@@ -56,7 +56,10 @@ public enum Countdown
 
             for (final GeneSequence s : original)
             {
-                assert FormulaDecoder.isValid(s) : "invalid original sequence:" + s;
+                if (!FormulaDecoder.isValid(s))
+                {
+                    throw new IllegalStateException("invalid original sequence:" + s);
+                }
             }
 
         }
@@ -66,7 +69,8 @@ public enum Countdown
         // it to solve our problem
         //
         final GeneticAlgorithm ga = newAlgorithm(config);
-        final Result result = ga.solve(original, 50);
+        final int maxGeneration = 30;
+        final Result result = ga.solve(original, maxGeneration);
         return result;
     }
 
@@ -80,7 +84,6 @@ public enum Countdown
         // for 'evolving' the gene pool through each generation
         final IChlorine chlorine = new CountdownChlorine(config);
 
-        // new GeneticAlgorithm(config);
         return new GeneticAlgorithm(chlorine);
     }
 

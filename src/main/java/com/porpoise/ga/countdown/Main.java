@@ -1,6 +1,11 @@
 package com.porpoise.ga.countdown;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
@@ -10,14 +15,35 @@ import com.porpoise.ga.Result;
 public class Main
 {
 
-    @SuppressWarnings("boxing")
     public static void main(final String[] args)
     {
+        if (args.length < 2)
+        {
+            System.out.println("Usage:");
+            System.out.println("Main <target number> [<constituent numbers>]+");
+            System.out.println("");
+            System.out.println("e.g.");
+            System.out.println("Main 13 5 2 3");
+            return;
+        }
         Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
 
-        final int target = 4;
-        final Integer[] numbers = { 7, 8, 2, 32, 10, 14, 9, 67 };
+        final int target = Integer.parseInt(args[0]);
+        final Integer[] numbers = getNumbers(args);
         run(target, numbers);
+    }
+
+    private static Integer[] getNumbers(final String[] args)
+    {
+        final List<Integer> numberList = Lists.newArrayList(Lists.transform(Arrays.asList(args), new Function<String, Integer>() {
+            @Override
+            public Integer apply(final String arg0)
+            {
+                return Integer.valueOf(arg0);
+            }
+        })).subList(1, args.length - 1);
+        final Integer[] numbers = numberList.toArray(new Integer[0]);
+        return numbers;
     }
 
     /**

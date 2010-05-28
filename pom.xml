@@ -29,8 +29,8 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 						</manifest>
+						<mainClass>com.porpoise.ga.countdown.Main</mainClass>
 						<!--
-							<mainClass>fully.qualified.MainClass</mainClass>
 							<manifestFile>src/main/resources/META-INF/manifest.mf</manifestFile>
 						-->
 					</archive>
