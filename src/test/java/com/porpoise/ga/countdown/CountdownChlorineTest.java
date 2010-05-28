@@ -6,16 +6,19 @@ import org.junit.Test;
 import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.Probability;
 
-public class CountdownChlorineTest {
+public class CountdownChlorineTest
+{
 
     @Test
-    public void test_doMutate() {
+    public void test_doMutate()
+    {
         final Probability config = Probability.alwaysCrossAlwaysMutate();
         final CountdownChlorine chlorine = new CountdownChlorine(config);
         final GeneSequence original = GeneSequence.of(1, 2, 3, 4);
         GeneSequence seq = original;
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++)
+        {
             seq = assertMutationProducesUniqueResults(chlorine, seq);
         }
     }
@@ -25,8 +28,8 @@ public class CountdownChlorineTest {
      * @param original
      * @return
      */
-    private GeneSequence assertMutationProducesUniqueResults(final CountdownChlorine chlorine,
-            final GeneSequence original) {
+    private GeneSequence assertMutationProducesUniqueResults(final CountdownChlorine chlorine, final GeneSequence original)
+    {
         // call the method under test
         final GeneSequence mutated = chlorine.doMutate(original);
 

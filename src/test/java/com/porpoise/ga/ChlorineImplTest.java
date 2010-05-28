@@ -2,10 +2,12 @@ package com.porpoise.ga;
 
 import org.junit.Test;
 
-public class ChlorineImplTest {
+public class ChlorineImplTest
+{
 
     @Test
-    public void test_evolve() {
+    public void test_evolve()
+    {
         final IGeneEvaluation<Integer> criteria = TestEvaluations.constant(5);
         final Probability always = Probability.neverCrossAlwaysMutate();
         final IGenePool pool = TestGenePools.alphaNumeric(criteria, 7);

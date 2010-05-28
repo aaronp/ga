@@ -16,13 +16,12 @@ import com.porpoise.common.ProportionalIterator;
 class GenePool<T extends Comparable<T>> implements IGenePool
 {
 
-    private final Comparator<GeneSequence> seqComparator;
-    private final List<GeneSequence>       population;
-    private final IGeneEvaluation<T>       geneEvaluation;
+    private final List<GeneSequence> population;
+    private final IGeneEvaluation<T> geneEvaluation;
 
-    private GeneSequence                   cachedSolution = null;
-    private List<GeneSequence>             cachedSortedPopulation;
-    private Probability                    probability;
+    private GeneSequence             cachedSolution = null;
+    private List<GeneSequence>       cachedSortedPopulation;
+    private Probability              probability;
 
     public GenePool(final IGeneEvaluation<T> eval)
     {
@@ -35,17 +34,6 @@ class GenePool<T extends Comparable<T>> implements IGenePool
         this.geneEvaluation = eval;
         this.probability = prob;
         this.population = Lists.newLinkedList();
-        final Comparator<GeneSequence> increasing = new Comparator<GeneSequence>() {
-            @Override
-            public int compare(final GeneSequence o1, final GeneSequence o2)
-            {
-                final IScore<T> score1 = o1.getScore(eval);
-                final IScore<T> score2 = o2.getScore(eval);
-                return score1.compareTo(score2);
-            }
-        };
-        // should be ordered in decreasing order
-        this.seqComparator = Ordering.from(increasing).reverse();
     }
 
     @Override
@@ -83,16 +71,33 @@ class GenePool<T extends Comparable<T>> implements IGenePool
     {
         if (this.cachedSortedPopulation == null)
         {
-            this.cachedSortedPopulation = Lists.newArrayListWithExpectedSize(this.population.size());
-            // sequences are sorted on score, so ensure they are all scored first
-            for (final GeneSequence s : this.population)
-            {
-                s.getScore(this.geneEvaluation);
-                this.cachedSortedPopulation.add(s);
-            }
-            Collections.sort(this.cachedSortedPopulation, this.seqComparator);
+            this.cachedSortedPopulation = cacheSequences();
         }
         return ProportionalIterator.ascending(this.probability.getPoolProportion(), this.cachedSortedPopulation);
+    }
+
+    final List<GeneSequence> cacheSequences()
+    {
+        final List<GeneSequence> cache = Lists.newArrayListWithExpectedSize(this.population.size());
+        // sequences are sorted on score, so ensure they are all scored first
+        for (final GeneSequence s : this.population)
+        {
+            s.getScore(this.geneEvaluation);
+            cache.add(s);
+        }
+
+        final Comparator<GeneSequence> comparator = new Comparator<GeneSequence>() {
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public int compare(final GeneSequence o1, final GeneSequence o2)
+            {
+                final IScore<T> score1 = o1.getScore(GenePool.this.geneEvaluation);
+                final IScore<T> score2 = o2.getScore(GenePool.this.geneEvaluation);
+                return score1.compareTo(score2);
+            }
+        };
+        Collections.sort(cache, comparator);
+        return cache;
     }
 
     @Override

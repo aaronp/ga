@@ -12,9 +12,9 @@ public class Main
     @SuppressWarnings("boxing")
     public static void main(final String[] args)
     {
-        final int target = 172;
+        final int target = 805;
 
-        final Integer[] numbers = { 7, 8, 2, 3, 1, 14, 9 };
+        final Integer[] numbers = { 7, 8, 2, 32, 10, 14, 9, 67 };
         run(target, numbers);
     }
 

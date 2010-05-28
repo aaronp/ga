@@ -9,7 +9,8 @@ import org.junit.Test;
 /**
  * Tests for the {@link GeneSequence} class
  */
-public class GeneSequenceTest {
+public class GeneSequenceTest
+{
 
     // important that we have two types with overlapping values (but they are different types),
     // and that their values are bound to repeat within a sequence ('cause they appear 3 times per sequence, but only
@@ -22,17 +23,18 @@ public class GeneSequenceTest {
 
     // create a sequencer which repeats - three of each type
     final GeneSequencer      sequencer = new GeneSequencer(//
-                                               type1, type2, type3, //
-                                               type1, type2, type3,// 
-                                               type1, type2, type3//
+                                               this.type1, this.type2, this.type3, //
+                                               this.type1, this.type2, this.type3,// 
+                                               this.type1, this.type2, this.type3//
                                        );
 
     /**
      * tests for {@link GeneSequence#getGenesByValue(Object)}
      */
     @Test
-    public void test_getGenesByValue() {
-        final GeneSequence seq1 = sequencer.create();
+    public void test_getGenesByValue()
+    {
+        final GeneSequence seq1 = this.sequencer.create();
         final IGene<?> firstGene = seq1.getGene(0);
         final Object value = firstGene.getValue();
         final Collection<IGene<?>> genes = seq1.getGenesByValue(value);
@@ -45,13 +47,15 @@ public class GeneSequenceTest {
      * tests for {@link GeneSequence#getGenesByType(IGenotype)}
      */
     @Test
-    public void test_getGenesByType() {
-        final GeneSequence seq1 = sequencer.create();
+    public void test_getGenesByType()
+    {
+        final GeneSequence seq1 = this.sequencer.create();
         final IGene<?> firstGene = seq1.getGene(1);
         final IGenotype<?> type = firstGene.getType();
         final Collection<IGene<?>> genes = seq1.getGenesByType(type);
         Assert.assertTrue(genes.contains(firstGene));
-        for (final IGene<?> g : genes) {
+        for (final IGene<?> g : genes)
+        {
             Assert.assertEquals(type, g.getType());
         }
     }
@@ -60,7 +64,8 @@ public class GeneSequenceTest {
      * Test for the {@link GeneSequence#diff(GeneSequence)} method
      */
     @Test
-    public void test_diff() {
+    public void test_diff()
+    {
         final GeneSequencer sqncr = TestSequencers.alphaNumeric();
 
         //
@@ -81,8 +86,9 @@ public class GeneSequenceTest {
      * test for {@link GeneSequence#getGeneOfTypeAndValue(IGenotype, Object)}
      */
     @Test
-    public void test_getGenesByTypeAndValue() {
-        final GeneSequence seq1 = sequencer.create();
+    public void test_getGenesByTypeAndValue()
+    {
+        final GeneSequence seq1 = this.sequencer.create();
         final IGene<?> firstGene = seq1.getGene(0);
         final Object value = firstGene.getValue();
         final IGenotype<?> type = firstGene.getType();
@@ -96,19 +102,22 @@ public class GeneSequenceTest {
      * @param value
      * @param type
      */
-    private void assertTypeAndValue(final Collection<IGene<?>> genes, final Object value, final IGenotype<?> type) {
-        for (final IGene<?> g : genes) {
+    private void assertTypeAndValue(final Collection<IGene<?>> genes, final Object value, final IGenotype<?> type)
+    {
+        for (final IGene<?> g : genes)
+        {
             Assert.assertEquals(value, g.getValue());
             Assert.assertEquals(type, g.getType());
         }
     }
 
     /**
-     * test for {@link GeneSequence#crossBySwapUniqueValuesByType(int, GeneSequence)}
+     * test for {@link GeneSequence#swapUniqueRecursive(GeneSequence, GeneSequence, int)}
      */
     @SuppressWarnings("boxing")
     @Test
-    public void test_swapUnique() {
+    public void test_swapUniqueRecursive()
+    {
 
         //
         // create two sequences (we can be sure about the number order):
@@ -156,7 +165,7 @@ public class GeneSequenceTest {
         //
         final int pos = 2;
         // call the method under test
-        final Offspring swapped = seq1.crossBySwapUniqueValuesByType(pos, seq2);
+        final Offspring swapped = GeneSequence.swapUniqueRecursive(seq1, seq2, pos);
 
         //
         // assert the expected result
@@ -180,7 +189,8 @@ public class GeneSequenceTest {
      * Test for the {@link GeneSequence#cross(int, GeneSequence)} method
      */
     @Test
-    public void test_cross() {
+    public void test_cross()
+    {
         final GeneSequencer sqncr = TestSequencers.alphaNumeric();
 
         //

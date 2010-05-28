@@ -586,7 +586,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
      * @param other
      * @return
      */
-    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos)
+    static final Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos)
     {
         //
         // 1) pick the gene to swap 'A' from this sequence

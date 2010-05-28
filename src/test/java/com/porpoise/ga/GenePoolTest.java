@@ -6,40 +6,46 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GenePoolTest {
+public class GenePoolTest
+{
 
-    private IGeneEvaluation<Integer> criteria = TestEvaluations.increasing();
-    private GenePool<Integer>        pool     = TestGenePools.alphaNumeric(criteria, 10);
+    private IGeneEvaluation<Integer> criteria;
+    private GenePool<Integer>        pool;
 
     @Before
-    public void setup() {
-        criteria = TestEvaluations.increasing();
-        pool = TestGenePools.alphaNumeric(criteria, 10);
+    public void setup()
+    {
+        this.criteria = TestEvaluations.increasing();
+        this.pool = TestGenePools.alphaNumeric(this.criteria, 10);
     }
 
     /**
      */
     @Test
-    public void test_getIndicesToRemove() {
-        final SortedSet<Integer> indices = pool.getIndicesToRemove();
+    public void test_getIndicesToRemove()
+    {
+        final SortedSet<Integer> indices = this.pool.getIndicesToRemove();
         Integer last = null;
-        for (final Integer index : indices) {
+        for (final Integer index : indices)
+        {
             Assert.assertTrue("indices should be descending", last == null || last.intValue() > index.intValue());
             last = index;
         }
     }
 
+    /**
+     * test the best (lowest) scores appear first in the list
+     */
     @Test
-    public void test_sortedIter() {
+    public void test_sortedIter()
+    {
 
         IScore<Integer> last = Scores.valueOf(Integer.MIN_VALUE);
-        for (final GeneSequence seq : pool) {
-            final IScore<Integer> s1 = seq.getScore(criteria);
-            System.out.println(s1);
-            Assert.assertTrue(String.format("scores should be in decreasing order: %s > %s", s1, last), s1
-                    .compareTo(last) > 0);
+        for (final GeneSequence seq : this.pool.cacheSequences())
+        {
+            final IScore<Integer> s1 = seq.getScore(this.criteria);
+            Assert.assertTrue(String.format("scores should be in decreasing order: %s > %s", s1, last), s1.compareTo(last) > 0);
             last = s1;
         }
-
     }
 }
