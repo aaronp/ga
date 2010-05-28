@@ -66,7 +66,17 @@ class CountdownChlorine extends AbstractChlorine {
 
     @Override
     protected Offspring doCross(final GeneSequence seqOne, final GeneSequence seqTwo) {
-        final Offspring offspring = seqOne.crossBySwapUniqueValuesByType(getProbability(), seqTwo);
+        final Probability probability = getProbability();
+        final int position = probability.nextInt(seqOne.size());
+        final Offspring offspring;
+
+        final boolean isNumber = position % 2 == 0;
+
+        if (isNumber) {
+            offspring = seqOne.crossBySwapUniqueValuesByType(probability, seqTwo);
+        } else {
+            offspring = seqOne.cross(position, seqTwo);
+        }
         return offspring;
     }
 
