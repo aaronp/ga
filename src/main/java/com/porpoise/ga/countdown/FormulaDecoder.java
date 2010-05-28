@@ -8,7 +8,7 @@ import com.porpoise.ga.GeneSequence;
 /**
  * Class used to decode a {@link GeneSequence} into a formula and return the result
  */
-public class FormulaDecoder
+class FormulaDecoder
 {
 
     /**
