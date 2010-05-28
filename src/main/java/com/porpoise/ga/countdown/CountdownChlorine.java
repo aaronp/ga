@@ -24,11 +24,16 @@ class CountdownChlorine extends AbstractChlorine
     @Override
     protected GeneSequence doMutate(final GeneSequence original)
     {
-
+        assert FormulaDecoder.isValid(original) : "original invalid : " + original;
         // create the mutation
         final GeneSequence mutation = original.mutate(getProbability());
 
-        return swapIfNumberNotUnique(original, mutation);
+        assert FormulaDecoder.isValid(original) : "original mutation invalid : " + mutation;
+
+        final GeneSequence m = swapIfNumberNotUnique(original, mutation);
+
+        assert FormulaDecoder.isValid(m) : "mutation invalid : " + original;
+        return m;
     }
 
     /**
@@ -74,6 +79,9 @@ class CountdownChlorine extends AbstractChlorine
     @Override
     protected Offspring doCross(final GeneSequence seqOne, final GeneSequence seqTwo)
     {
+        assert FormulaDecoder.isValid(seqOne) : "seqOne invalid : " + seqOne;
+        assert FormulaDecoder.isValid(seqTwo) : "seqTwo invalid : " + seqTwo;
+
         final Probability probability = getProbability();
         final int position = probability.nextInt(seqOne.size());
         final Offspring offspring;
@@ -82,12 +90,16 @@ class CountdownChlorine extends AbstractChlorine
 
         if (isNumber)
         {
-            offspring = seqOne.crossBySwapUniqueValuesByType(probability, seqTwo);
+            offspring = seqOne.crossBySwapUniqueValuesByType(position, seqTwo);
         }
         else
         {
             offspring = seqOne.cross(position, seqTwo);
         }
+
+        assert FormulaDecoder.isValid(offspring.getOffspringOne()) : "offspringOne invalid : " + offspring.getOffspringOne();
+        assert FormulaDecoder.isValid(offspring.getOffspringTwo()) : "offspringTwo invalid : " + offspring.getOffspringTwo();
+
         return offspring;
     }
 

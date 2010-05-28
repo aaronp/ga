@@ -8,7 +8,7 @@ import com.porpoise.ga.GeneSequence;
 /**
  * Class used to decode a {@link GeneSequence} into a formula and return the result
  */
-class FormulaDecoder
+public class FormulaDecoder
 {
 
     /**
@@ -44,7 +44,7 @@ class FormulaDecoder
      *            the sequence to evaluate
      * @return true if the sequence is a valid equation
      */
-    static boolean isValid(final GeneSequence seq)
+    public static boolean isValid(final GeneSequence seq)
     {
         final Set<Integer> uniqueValues = Sets.newHashSet();
 

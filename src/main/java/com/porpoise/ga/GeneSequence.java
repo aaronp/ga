@@ -16,6 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.porpoise.ga.countdown.FormulaDecoder;
 
 /**
  * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific solution. The sequence is
@@ -71,6 +72,11 @@ public final class GeneSequence implements Iterable<IGene<?>>
         for (final IGene<?> gene : geneValues)
         {
             putGeneInternal(gene);
+        }
+
+        if (!FormulaDecoder.isValid(this))
+        {
+            System.err.println("invalid:" + this);
         }
     }
 
@@ -205,13 +211,18 @@ public final class GeneSequence implements Iterable<IGene<?>>
 
         for (int index = pos; index < size(); index++)
         {
-            final IGene<?> a = getGene(index).copy();
-            final IGene<?> b = other.getGene(index).copy();
-            copyA.setGene(index, b);
-            copyB.setGene(index, a);
+            copyA.swapAt(index, copyB);
         }
 
         return new Offspring(copyA, copyB);
+    }
+
+    private void swapAt(final int index, final GeneSequence other)
+    {
+        final IGene<?> a = getGene(index).copy();
+        final IGene<?> b = other.getGene(index).copy();
+        setGene(index, b);
+        other.setGene(index, a);
     }
 
     /**
@@ -530,12 +541,35 @@ public final class GeneSequence implements Iterable<IGene<?>>
      * @param other
      * @return the offspring
      */
-    public Offspring crossBySwapUniqueValuesByType(final int pos, final GeneSequence other)
+    public Offspring crossBySwapUniqueValuesByType(final int pos, final GeneSequence other, final IGenotype<?>... uniqueTypes)
     {
         final GeneSequence copyA = copySequence();
         final GeneSequence copyB = other.copySequence();
 
+        final List<IGenotype<?>> uTypes = Arrays.asList(uniqueTypes);
+        for (int index = pos; index < size(); index++)
+        {
+            if (uTypes.contains(copyA.getGeneType(index)))
+            {
+
+            }
+            else
+            {
+                copyA.swapAt(index, copyB);
+            }
+        }
+
         return swapUniqueRecursive(copyA, copyB, pos, other);
+    }
+
+    /**
+     * @param index
+     * @return the type of the gene at the given index
+     */
+    public IGenotype<?> getGeneType(final int index)
+    {
+        final IGene<?> g = getGene(index);
+        return g.getType();
     }
 
     /**

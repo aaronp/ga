@@ -1,5 +1,6 @@
 package com.porpoise.ga.countdown;
 
+import com.porpoise.ga.GeneSequence;
 import com.porpoise.ga.GeneSequencer;
 import com.porpoise.ga.GeneticAlgorithm;
 import com.porpoise.ga.Genotype;
@@ -47,6 +48,12 @@ public enum Countdown
             final GeneSequencer seq = createSequencer(numbers);
             // ... and use that sequence to create an initial gene pool of a given size
             original = seq.newPool(eval, someInitialPoolSize);
+
+            for (final GeneSequence s : original)
+            {
+                assert FormulaDecoder.isValid(s) : "invalid original sequence:" + s;
+            }
+
         }
 
         //
