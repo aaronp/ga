@@ -1,8 +1,11 @@
 package com.porpoise.ga;
 
+import org.junit.Ignore;
+
 import com.porpoise.ga.Scores.ComparableScore;
 
-public enum TestEvaluations
+@Ignore
+enum TestEvaluations
 {
     ;
 

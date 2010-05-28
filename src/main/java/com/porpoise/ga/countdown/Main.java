@@ -1,6 +1,7 @@
 package com.porpoise.ga.countdown;
 
 import com.google.common.base.Joiner;
+import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
 /**
@@ -12,8 +13,9 @@ public class Main
     @SuppressWarnings("boxing")
     public static void main(final String[] args)
     {
-        final int target = 805;
+        Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
 
+        final int target = 4;
         final Integer[] numbers = { 7, 8, 2, 32, 10, 14, 9, 67 };
         run(target, numbers);
     }

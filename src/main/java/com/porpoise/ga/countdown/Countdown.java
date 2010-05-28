@@ -26,8 +26,13 @@ public enum Countdown
         // the probability object is really a configuration or probabilities (cross rates, cull rates, mutations, ...).
         // here we use the default configuration
         //
-        final Probability config = Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
+        final Probability config = Probability.getInstance();
 
+        return solve(config, target, numbers);
+    }
+
+    public static Result solve(final Probability config, final int target, final Integer... numbers)
+    {
         // all our algorithm really needs is an initial gene pool,
         // as the gene pool knows how to maintain (cull) itself
         final IGenePool original;

@@ -1,6 +1,9 @@
 package com.porpoise.ga;
 
-public enum TestGenePools
+import org.junit.Ignore;
+
+@Ignore
+enum TestGenePools
 {
 
     ; // uninstantiable

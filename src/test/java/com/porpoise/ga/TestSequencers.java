@@ -1,6 +1,9 @@
 package com.porpoise.ga;
 
-public enum TestSequencers
+import org.junit.Ignore;
+
+@Ignore
+enum TestSequencers
 {
     ;// uninstantiable
 
