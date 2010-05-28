@@ -30,21 +30,21 @@ public class Offspring
         return this.offspringTwo;
     }
 
-    public GeneSequence getOne(final Probability probability)
-    {
-        return get(this.offspringOne, probability);
-    }
-
-    public GeneSequence getTwo(final Probability probability)
-    {
-        return get(this.offspringTwo, probability);
-    }
-
-    private GeneSequence get(final GeneSequence offspring, final Probability probability)
-    {
-        final boolean mutate = probability.nextMutate();
-        return mutate ? offspring.mutate(probability) : offspring;
-    }
+    // public GeneSequence getOne(final Probability probability)
+    // {
+    // return get(this.offspringOne, probability);
+    // }
+    //
+    // public GeneSequence getTwo(final Probability probability)
+    // {
+    // return get(this.offspringTwo, probability);
+    // }
+    //
+    // private GeneSequence get(final GeneSequence offspring, final Probability probability)
+    // {
+    // final boolean mutate = probability.nextMutate();
+    // return mutate ? offspring.mutate(probability) : offspring;
+    // }
 
     public List<IGene<?>> getOffspringOneGenes()
     {

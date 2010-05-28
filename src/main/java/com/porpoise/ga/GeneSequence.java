@@ -16,7 +16,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.porpoise.ga.countdown.FormulaDecoder;
 
 /**
  * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific solution. The sequence is
@@ -72,11 +71,6 @@ public final class GeneSequence implements Iterable<IGene<?>>
         for (final IGene<?> gene : geneValues)
         {
             putGeneInternal(gene);
-        }
-
-        if (!FormulaDecoder.isValid(this))
-        {
-            System.err.println("invalid:" + this);
         }
     }
 
@@ -551,7 +545,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
         {
             if (uTypes.contains(copyA.getGeneType(index)))
             {
-
+                swapUniqueRecursive(copyA, copyB, index);
             }
             else
             {
@@ -559,7 +553,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
             }
         }
 
-        return swapUniqueRecursive(copyA, copyB, pos, other);
+        return new Offspring(copyA, copyB);
     }
 
     /**
@@ -592,7 +586,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
      * @param other
      * @return
      */
-    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos, final GeneSequence other)
+    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos)
     {
         //
         // 1) pick the gene to swap 'A' from this sequence
@@ -653,7 +647,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
         //
         // 8) otherwise, recurse on step #4's position
         //
-        return swapUniqueRecursive(copyA, copyB, targetGeneOfSameValue.getPosition(), other);
+        return swapUniqueRecursive(copyA, copyB, targetGeneOfSameValue.getPosition());
     }
 
     /**

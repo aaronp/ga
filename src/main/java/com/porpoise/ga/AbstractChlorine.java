@@ -48,9 +48,25 @@ public abstract class AbstractChlorine implements IChlorine
             // potentially cross the two sequences
             final Offspring offspring = cross(seqOne, seqTwo);
 
-            // potentially mutate the offspring
-            newPool.populate(offspring.getOne(this.probability));
-            newPool.populate(offspring.getTwo(this.probability));
+            //
+            // Get the first offspring
+            //
+            GeneSequence one = offspring.getOffspringOne();
+            if (this.probability.nextMutate())
+            {
+                one = doMutate(offspring.getOffspringOne());
+            }
+            newPool.populate(one);
+
+            //
+            // Get the second offspring
+            //
+            GeneSequence two = offspring.getOffspringTwo();
+            if (this.probability.nextMutate())
+            {
+                two = doMutate(offspring.getOffspringTwo());
+            }
+            newPool.populate(two);
         }
 
         // thin out the pool

@@ -12,6 +12,8 @@ import com.porpoise.ga.Probability;
 class CountdownChlorine extends AbstractChlorine
 {
 
+    private IGenotype<Integer> cachedNumberType;
+
     public CountdownChlorine(final Probability p)
     {
         super(p);
@@ -27,8 +29,6 @@ class CountdownChlorine extends AbstractChlorine
         assert FormulaDecoder.isValid(original) : "original invalid : " + original;
         // create the mutation
         final GeneSequence mutation = original.mutate(getProbability());
-
-        assert FormulaDecoder.isValid(original) : "original mutation invalid : " + mutation;
 
         final GeneSequence m = swapIfNumberNotUnique(original, mutation);
 
@@ -49,8 +49,7 @@ class CountdownChlorine extends AbstractChlorine
         assert newGeneByIndex.getFirst().intValue() == mutatedGene.getPosition();
 
         // check to see if we've mutated a number. If so, we need to swap
-        final IGene<Integer> firstNumber = original.getGene(0);
-        final IGenotype<Integer> numberType = firstNumber.getType();
+        final IGenotype<Integer> numberType = getNumberType(original);
         if (mutatedGene.getType().equals(numberType))
         {
 
@@ -76,6 +75,17 @@ class CountdownChlorine extends AbstractChlorine
         return mutation;
     }
 
+    private IGenotype<Integer> getNumberType(final GeneSequence original)
+    {
+        if (this.cachedNumberType == null)
+        {
+            final IGene<Integer> firstNumber = original.getGene(0);
+            final IGenotype<Integer> numberType = firstNumber.getType();
+            this.cachedNumberType = numberType;
+        }
+        return this.cachedNumberType;
+    }
+
     @Override
     protected Offspring doCross(final GeneSequence seqOne, final GeneSequence seqTwo)
     {
@@ -86,15 +96,23 @@ class CountdownChlorine extends AbstractChlorine
         final int position = probability.nextInt(seqOne.size());
         final Offspring offspring;
 
-        final boolean isNumber = position % 2 == 0;
-
-        if (isNumber)
+        // final boolean isNumber = position % 2 == 0;
+        //
+        // if (isNumber)
+        // {
+        // }
+        // else
+        // {
+        // // offspring = seqOne.cross(position, seqTwo);
+        // }
+        final IGenotype<?> numberType = getNumberType(seqOne);
+        if (position == 0)
         {
-            offspring = seqOne.crossBySwapUniqueValuesByType(position, seqTwo);
+            offspring = new Offspring(seqOne, seqTwo);
         }
         else
         {
-            offspring = seqOne.cross(position, seqTwo);
+            offspring = seqOne.crossBySwapUniqueValuesByType(position, seqTwo, numberType);
         }
 
         assert FormulaDecoder.isValid(offspring.getOffspringOne()) : "offspringOne invalid : " + offspring.getOffspringOne();
