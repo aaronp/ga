@@ -61,6 +61,9 @@ class CountdownChlorine extends AbstractChlorine {
                 }
             }
         }
+
+        assert FormulaDecoder.isValid(mutation) : String.format("invalid mutation at pos %s, %s ", mutatedGene
+                .getPosition(), mutation);
         return mutation;
     }
 
