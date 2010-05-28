@@ -69,7 +69,7 @@ public enum Countdown
         // it to solve our problem
         //
         final GeneticAlgorithm ga = newAlgorithm(config);
-        final int maxGeneration = 30;
+        final int maxGeneration = 27;
         final Result result = ga.solve(original, maxGeneration);
         return result;
     }

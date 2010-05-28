@@ -1,5 +1,6 @@
 package com.porpoise.ga.countdown;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,11 +20,7 @@ public class Main
     {
         if (args.length < 2)
         {
-            System.out.println("Usage:");
-            System.out.println("Main <target number> [<constituent numbers>]+");
-            System.out.println("");
-            System.out.println("e.g.");
-            System.out.println("Main 13 5 2 3");
+            printUsage(System.out);
             return;
         }
         Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
@@ -31,6 +28,15 @@ public class Main
         final int target = Integer.parseInt(args[0]);
         final Integer[] numbers = getNumbers(args);
         run(target, numbers);
+    }
+
+    private static void printUsage(final PrintStream out)
+    {
+        out.println("Usage:");
+        out.println("Main <target number> [<constituent numbers>]+");
+        out.println("");
+        out.println("e.g.");
+        out.println("Main 13 5 2 3");
     }
 
     private static Integer[] getNumbers(final String[] args)
@@ -41,7 +47,7 @@ public class Main
             {
                 return Integer.valueOf(arg0);
             }
-        })).subList(1, args.length - 1);
+        })).subList(1, args.length);
         final Integer[] numbers = numberList.toArray(new Integer[0]);
         return numbers;
     }
