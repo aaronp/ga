@@ -11,13 +11,15 @@ import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
 /**
- * Countdown is a functional utility class which, given a collection of numbers and a target (goal), It returns a
- * {@link Result} containing the way those numbers can be combined to reach the goal.
+ * Countdown is a functional utility class which, given a collection of numbers and a target (goal), It returns a {@link Result} containing
+ * the way those numbers can be combined to reach the goal.
  */
-public enum Countdown {
+public enum Countdown
+{
     ;//
 
-    public static Result solve(final int target, final Integer[] numbers) {
+    public static Result solve(final int target, final Integer[] numbers)
+    {
 
         //
         // the probability object is really a configuration or probabilities (cross rates, cull rates, mutations, ...).
@@ -60,7 +62,8 @@ public enum Countdown {
      * @param config
      * @return a new genetic algorithm based on the given configuration
      */
-    private static GeneticAlgorithm newAlgorithm(final Probability config) {
+    private static GeneticAlgorithm newAlgorithm(final Probability config)
+    {
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
         final IChlorine chlorine = new CountdownChlorine(config);
@@ -73,13 +76,15 @@ public enum Countdown {
      * @param numbers
      * @return
      */
-    private static GeneSequencer createSequencer(final Integer[] numbers) {
+    private static GeneSequencer createSequencer(final Integer[] numbers)
+    {
         final IGenotype<Integer> numberType = Genotype.of(numbers);
         final IGenotype<Operator> operatorType = Genotype.of(Operator.values());
 
         final GeneSequencer seq = new GeneSequencer(numberType);
         final int count = numbers.length - 1;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             seq.addGenotype(operatorType);
             seq.addGenotype(numberType);
         }

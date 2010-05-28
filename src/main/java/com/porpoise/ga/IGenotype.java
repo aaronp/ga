@@ -1,6 +1,7 @@
 package com.porpoise.ga;
 
-public interface IGenotype<T> {
+public interface IGenotype<T>
+{
 
     public int hashCode();
 

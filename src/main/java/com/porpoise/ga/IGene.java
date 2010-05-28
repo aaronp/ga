@@ -1,10 +1,10 @@
 package com.porpoise.ga;
 
 /**
- * 
  * @param <T>
  */
-public interface IGene<T> {
+public interface IGene<T>
+{
 
     /**
      * The value represented by this gene
@@ -26,7 +26,6 @@ public interface IGene<T> {
     int getPosition();
 
     /**
-     * 
      * @param random
      * @return a new gene based on a mutation from this gene
      */

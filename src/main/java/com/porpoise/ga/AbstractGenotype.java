@@ -7,19 +7,23 @@ import java.util.Iterator;
  * 
  * @param <T>
  */
-public abstract class AbstractGenotype<T> implements IGenotype<T> {
+public abstract class AbstractGenotype<T> implements IGenotype<T>
+{
 
     private final Iterator<T> geneIter;
 
-    protected AbstractGenotype(final Iterator<T> valueIterator) {
-        geneIter = valueIterator;
+    protected AbstractGenotype(final Iterator<T> valueIterator)
+    {
+        this.geneIter = valueIterator;
     }
 
-    public T create() {
-        return geneIter.next();
+    public T create()
+    {
+        return this.geneIter.next();
     }
 
-    public IGene<T> createGene(final int position) {
+    public IGene<T> createGene(final int position)
+    {
         return new GeneImpl<T>(this, position, create());
     }
 }

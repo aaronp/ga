@@ -13,10 +13,13 @@ import com.porpoise.common.RandomizingIter;
  * 
  * @param <T>
  */
-public class Genotype<T> extends AbstractGenotype<T> {
+public class Genotype<T> extends AbstractGenotype<T>
+{
 
-    public static <T> IGenotype<T> of(final Collection<T> values) {
-        if (values.isEmpty()) {
+    public static <T> IGenotype<T> of(final Collection<T> values)
+    {
+        if (values.isEmpty())
+        {
             throw new IllegalArgumentException("One or more values must be supplied");
         }
         return new Genotype<T>(values);
@@ -27,7 +30,8 @@ public class Genotype<T> extends AbstractGenotype<T> {
      * @param values
      * @return a genotype which will repeat the given values in a random order
      */
-    public static <T> IGenotype<T> of(final T... values) {
+    public static <T> IGenotype<T> of(final T... values)
+    {
         return of(Arrays.asList(values));
     }
 
@@ -36,15 +40,18 @@ public class Genotype<T> extends AbstractGenotype<T> {
      * @param values
      * @return a genotype which will repeat the given values in a random order
      */
-    public static <T> IGenotype<T> withFixedOrder(final T... values) {
+    public static <T> IGenotype<T> withFixedOrder(final T... values)
+    {
         return new Genotype<T>(Iterators.cycle(values));
     }
 
-    private Genotype(final Iterable<T> values) {
+    private Genotype(final Iterable<T> values)
+    {
         this(new RandomizingIter<T>(Lists.newArrayList(values)));
     }
 
-    private Genotype(final Iterator<T> values) {
+    private Genotype(final Iterator<T> values)
+    {
         super(values);
     }
 }

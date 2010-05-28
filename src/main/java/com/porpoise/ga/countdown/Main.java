@@ -6,10 +6,12 @@ import com.porpoise.ga.Result;
 /**
  * runner class for the countdown application
  */
-public class Main {
+public class Main
+{
 
     @SuppressWarnings("boxing")
-    public static void main(final String[] args) {
+    public static void main(final String[] args)
+    {
         final int target = 21;
 
         final Integer[] numbers = { 7, 8, 2, 3, 1 };
@@ -21,7 +23,8 @@ public class Main {
      * @param numbers
      */
     @SuppressWarnings("boxing")
-    public static void run(final int target, final Integer[] numbers) {
+    public static void run(final int target, final Integer[] numbers)
+    {
         final long start = System.currentTimeMillis();
         System.out.println(String.format("Looking for %d in %s:", target, Joiner.on(",").join(numbers)));
 

@@ -7,22 +7,25 @@ import com.porpoise.ga.Scores;
 import com.porpoise.ga.Scores.ComparableScore;
 
 /**
- * the evaluation used to determine the fitness of a gene sequence.
- * 
- * The sequence is evaluated as an equation, and its fitness is determined by it's distance from the target number.
+ * the evaluation used to determine the fitness of a gene sequence. The sequence is evaluated as an equation, and its fitness is determined
+ * by it's distance from the target number.
  */
-class CountdownEvaluation implements IGeneEvaluation<Integer> {
+class CountdownEvaluation implements IGeneEvaluation<Integer>
+{
 
     private final int target;
 
-    public CountdownEvaluation(final int targetValue) {
-        target = targetValue;
+    public CountdownEvaluation(final int targetValue)
+    {
+        this.target = targetValue;
     }
 
     @Override
-    public IScore<Integer> score(final GeneSequence sequence) {
+    public IScore<Integer> score(final GeneSequence sequence)
+    {
         final Integer result = FormulaDecoder.getValue(sequence);
-        if (result == null) {
+        if (result == null)
+        {
             return Scores.invalidInt();
         }
 
@@ -34,8 +37,9 @@ class CountdownEvaluation implements IGeneEvaluation<Integer> {
      * @param resultValue
      * @return
      */
-    final ComparableScore<Integer> score(final int resultValue) {
-        final int diff = Math.abs(resultValue - target);
+    final ComparableScore<Integer> score(final int resultValue)
+    {
+        final int diff = Math.abs(resultValue - this.target);
         return Scores.valueOf(diff).setComplete(diff == 0);
     }
 

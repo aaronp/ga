@@ -3,36 +3,41 @@ package com.porpoise.ga;
 import java.util.Iterator;
 
 /**
- * Implementation of {@link IChlorine}
- * 
- * This class is able to take a n {@link IGenePool} and transform ('evolve') it into another
- * 
+ * Implementation of {@link IChlorine} This class is able to take a n {@link IGenePool} and transform ('evolve') it into another
  */
-public abstract class AbstractChlorine implements IChlorine {
+public abstract class AbstractChlorine implements IChlorine
+{
 
     private final Probability probability;
 
-    public AbstractChlorine(final Probability p) {
-        probability = p;
+    public AbstractChlorine(final Probability p)
+    {
+        this.probability = p;
     }
 
     /**
      * convert one gene pool into another
      */
     @Override
-    public IGenePool evolve(final IGenePool pool) {
+    public IGenePool evolve(final IGenePool pool)
+    {
         final IGenePool newPool = pool;// new GenePool(eval);
 
         final Iterator<GeneSequence> iter = pool.iterator();
-        while (iter.hasNext()) {
+        while (iter.hasNext())
+        {
             final GeneSequence seqOne = iter.next();
 
             // if we have an odd number in our gene pool then we may need to terminate early
-            if (!iter.hasNext()) {
-                if (probability.nextMutate()) {
+            if (!iter.hasNext())
+            {
+                if (this.probability.nextMutate())
+                {
                     final GeneSequence newSeq = doMutate(seqOne);
                     newPool.populate(newSeq);
-                } else {
+                }
+                else
+                {
                     newPool.populate(seqOne);
                 }
                 continue;
@@ -44,8 +49,8 @@ public abstract class AbstractChlorine implements IChlorine {
             final Offspring offspring = cross(seqOne, seqTwo);
 
             // potentially mutate the offspring
-            newPool.populate(offspring.getOne(probability));
-            newPool.populate(offspring.getTwo(probability));
+            newPool.populate(offspring.getOne(this.probability));
+            newPool.populate(offspring.getTwo(this.probability));
         }
 
         // thin out the pool
@@ -65,11 +70,15 @@ public abstract class AbstractChlorine implements IChlorine {
      * @param seqTwo
      * @return
      */
-    protected Offspring cross(final GeneSequence seqOne, final GeneSequence seqTwo) {
+    protected Offspring cross(final GeneSequence seqOne, final GeneSequence seqTwo)
+    {
         final Offspring offspring;
-        if (probability.nextCross()) {
+        if (this.probability.nextCross())
+        {
             offspring = doCross(seqOne, seqTwo);
-        } else {
+        }
+        else
+        {
             offspring = new Offspring(seqOne, seqTwo);
         }
         return offspring;
@@ -85,7 +94,8 @@ public abstract class AbstractChlorine implements IChlorine {
     /**
      * @return the probability
      */
-    protected Probability getProbability() {
-        return probability;
+    protected Probability getProbability()
+    {
+        return this.probability;
     }
 }

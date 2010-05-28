@@ -1,12 +1,10 @@
 package com.porpoise.ga;
 
-public interface IGeneEvaluation<T> {
+public interface IGeneEvaluation<T>
+{
 
     /**
-     * convert a given sequence into a score, the lower being better.
-     * 
-     * Zero is the best score, which will be considered the correct solution.
-     * 
+     * convert a given sequence into a score, the lower being better. Zero is the best score, which will be considered the correct solution.
      * The range (scope) does not matter, as the result will just be compared with each other.
      * 
      * @param sequence

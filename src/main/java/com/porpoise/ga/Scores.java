@@ -1,71 +1,87 @@
 package com.porpoise.ga;
 
-public enum Scores {
+public enum Scores
+{
     ;// uninstantiable
 
-    public static class ComparableScore<T extends Comparable<T>> implements IScore<T> {
+    public static class ComparableScore<T extends Comparable<T>> implements IScore<T>
+    {
         private final T value;
         private Boolean isComplete;
         private T       targetValue;
         private Boolean isValid;
 
-        public ComparableScore<T> setTarget(final T target) {
-            targetValue = target;
+        public ComparableScore<T> setTarget(final T target)
+        {
+            this.targetValue = target;
             return this;
         }
 
-        public ComparableScore<T> setValid(final boolean valid) {
-            isValid = Boolean.valueOf(valid);
+        public ComparableScore<T> setValid(final boolean valid)
+        {
+            this.isValid = Boolean.valueOf(valid);
             return this;
         }
 
-        public ComparableScore<T> setComplete(final boolean complete) {
-            isComplete = Boolean.valueOf(complete);
+        public ComparableScore<T> setComplete(final boolean complete)
+        {
+            this.isComplete = Boolean.valueOf(complete);
             return this;
         }
 
-        public ComparableScore(final T valueParam) {
+        public ComparableScore(final T valueParam)
+        {
             this.value = valueParam;
         }
 
         @Override
-        public boolean isComplete() {
-            if (isComplete != null) {
-                return isComplete.booleanValue();
+        public boolean isComplete()
+        {
+            if (this.isComplete != null)
+            {
+                return this.isComplete.booleanValue();
             }
-            if (targetValue != null && value != null) {
-                return targetValue.compareTo(value) == 0;
+            if (this.targetValue != null && this.value != null)
+            {
+                return this.targetValue.compareTo(this.value) == 0;
             }
             return false;
         }
 
         @Override
-        public boolean isValid() {
-            if (isValid != null) {
-                return isValid.booleanValue();
+        public boolean isValid()
+        {
+            if (this.isValid != null)
+            {
+                return this.isValid.booleanValue();
             }
-            return value != null;
+            return this.value != null;
         }
 
         @Override
-        public int compareTo(final IScore<T> other) {
-            if (value == null) {
+        public int compareTo(final IScore<T> other)
+        {
+            if (this.value == null)
+            {
                 return other.getValue() == null ? 0 : 1;
             }
-            if (other.getValue() == null) {
+            if (other.getValue() == null)
+            {
                 return -1;
             }
-            return value.compareTo(other.getValue());
+            return this.value.compareTo(other.getValue());
         }
 
         @Override
-        public T getValue() {
-            return value;
+        public T getValue()
+        {
+            return this.value;
         }
 
         @Override
-        public String toString() {
-            return value == null ? "null" : value.toString();
+        public String toString()
+        {
+            return this.value == null ? "null" : this.value.toString();
         }
     }
 
@@ -73,19 +89,23 @@ public enum Scores {
      * @param value
      * @return a score for the given int value
      */
-    public static ComparableScore<Integer> valueOf(final int value) {
+    public static ComparableScore<Integer> valueOf(final int value)
+    {
         return new ComparableScore<Integer>(Integer.valueOf(value));
     }
 
-    public static ComparableScore<Float> valueOf(final float value) {
+    public static ComparableScore<Float> valueOf(final float value)
+    {
         return new ComparableScore<Float>(Float.valueOf(value));
     }
 
-    public static ComparableScore<Double> valueOf(final double value) {
+    public static ComparableScore<Double> valueOf(final double value)
+    {
         return new ComparableScore<Double>(Double.valueOf(value));
     }
 
-    public static <T extends Comparable<T>> ComparableScore<T> valueOf(final T value) {
+    public static <T extends Comparable<T>> ComparableScore<T> valueOf(final T value)
+    {
         return new ComparableScore<T>(value);
     }
 
@@ -93,7 +113,8 @@ public enum Scores {
      * @param value
      * @return a score for the given int value
      */
-    public static IScore<Integer> invalidInt() {
+    public static IScore<Integer> invalidInt()
+    {
         return new ComparableScore<Integer>(null);
     }
 

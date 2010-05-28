@@ -18,13 +18,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
- * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific
- * solution.
- * 
- * The sequence is expected to be interpreted by an {@link IGeneEvaluation} object, resulting in a {@link IScore} being
- * given to this sequence by which it can be rated against other gene sequence strains.
+ * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific solution. The sequence is
+ * expected to be interpreted by an {@link IGeneEvaluation} object, resulting in a {@link IScore} being given to this sequence by which it
+ * can be rated against other gene sequence strains.
  */
-public final class GeneSequence implements Iterable<IGene<?>> {
+public final class GeneSequence implements Iterable<IGene<?>>
+{
 
     private IScore<?>                              cachedScore;
     private final List<IGene<?>>                   genes;
@@ -34,10 +33,12 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     /**
      * @return a new gene sequence comprised entirely of the given values
      */
-    public static <T> GeneSequence of(final T... values) {
+    public static <T> GeneSequence of(final T... values)
+    {
         final IGenotype<T> type = Genotype.withFixedOrder(values);
         final GeneSequencer seq = new GeneSequencer();
-        for (int i = values.length; --i >= 0;) {
+        for (int i = values.length; --i >= 0;)
+        {
             seq.addGenotype(type);
         }
         return seq.create();
@@ -47,7 +48,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param geneValues
      *            the gene values used to build this sequence
      */
-    public GeneSequence(final Iterable<IGene<?>> geneValues) {
+    public GeneSequence(final Iterable<IGene<?>> geneValues)
+    {
         this(Lists.newArrayList(geneValues));
     }
 
@@ -55,16 +57,19 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param geneValues
      *            the gene values used to build this sequence
      */
-    public GeneSequence(final IGene<?>... geneValues) {
+    public GeneSequence(final IGene<?>... geneValues)
+    {
         this(Arrays.asList(geneValues));
     }
 
-    private GeneSequence(final List<IGene<?>> geneValues) {
-        genes = Lists.newArrayList();
-        genesByValue = ArrayListMultimap.create();
-        genesByType = ArrayListMultimap.create();
+    private GeneSequence(final List<IGene<?>> geneValues)
+    {
+        this.genes = Lists.newArrayList();
+        this.genesByValue = ArrayListMultimap.create();
+        this.genesByType = ArrayListMultimap.create();
 
-        for (final IGene<?> gene : geneValues) {
+        for (final IGene<?> gene : geneValues)
+        {
             putGeneInternal(gene);
         }
     }
@@ -74,16 +79,18 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @return the gene at the given index
      */
     @SuppressWarnings("unchecked")
-    public <T> IGene<T> getGene(final int index) {
-        return (IGene<T>) genes.get(index);
+    public <T> IGene<T> getGene(final int index)
+    {
+        return (IGene<T>) this.genes.get(index);
     }
 
     /**
      * @param value
      * @return the genes in this sequence which have the given value
      */
-    public Collection<IGene<?>> getGenesByValue(final Object value) {
-        return genesByValue.get(value);
+    public Collection<IGene<?>> getGenesByValue(final Object value)
+    {
+        return this.genesByValue.get(value);
     }
 
     /**
@@ -91,16 +98,16 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param value
      * @return the genes which have the given type and value
      */
-    public <T> Collection<IGene<?>> getGenesByTypeAndValue(final IGenotype<T> type, final Object value) {
+    public <T> Collection<IGene<?>> getGenesByTypeAndValue(final IGenotype<T> type, final Object value)
+    {
         final Collection<IGene<?>> byValue = getGenesByValue(value);
         final Collection<IGene<?>> byType = getGenesByType(type);
         return Collections2.filter(byValue, Predicates.in(byType));
     }
 
     /**
-     * the single gene of the given type and value. If no gene exists with the specified type and value, then a null
-     * value will be returned. If multiple genes exist with the given type and value, then an
-     * {@link IllegalArgumentException} will be thrown.
+     * the single gene of the given type and value. If no gene exists with the specified type and value, then a null value will be returned.
+     * If multiple genes exist with the given type and value, then an {@link IllegalArgumentException} will be thrown.
      * 
      * @param type
      * @param value
@@ -108,9 +115,11 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @throws IllegalArgumentException
      */
     @SuppressWarnings("unchecked")
-    public <T> IGene<T> getGeneOfTypeAndValue(final IGenotype<T> type, final Object value) {
+    public <T> IGene<T> getGeneOfTypeAndValue(final IGenotype<T> type, final Object value)
+    {
         final Collection<IGene<?>> genesByTypeAndValue = getGenesByTypeAndValue(type, value);
-        if (genesByTypeAndValue.isEmpty()) {
+        if (genesByTypeAndValue.isEmpty())
+        {
             return null;
         }
         return (IGene<T>) Iterables.getOnlyElement(genesByTypeAndValue);
@@ -120,30 +129,34 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param type
      * @return a collection of all genes of the given type
      */
-    public Collection<IGene<?>> getGenesByType(final IGenotype<?> type) {
-        return genesByType.get(type);
+    public Collection<IGene<?>> getGenesByType(final IGenotype<?> type)
+    {
+        return this.genesByType.get(type);
     }
 
     /**
      * @return the genes
      */
-    public List<IGene<?>> getGenes() {
-        return ImmutableList.<IGene<?>> copyOf(genes);
+    public List<IGene<?>> getGenes()
+    {
+        return ImmutableList.<IGene<?>> copyOf(this.genes);
     }
 
     /**
      * @return an iterator which may iterate over the genes in this list
      */
     @Override
-    public Iterator<IGene<?>> iterator() {
+    public Iterator<IGene<?>> iterator()
+    {
         return getGenes().iterator();
     }
 
     /**
      * @return the number of genes in this sequence
      */
-    public int size() {
-        return genes.size();
+    public int size()
+    {
+        return this.genes.size();
     }
 
     /**
@@ -154,7 +167,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *            the other sequence with which to cross with this sequence
      * @return the offspring resulting from the 'breeding' (crossing) of these two sequences
      */
-    public Offspring cross(final Random rand, final GeneSequence other) {
+    public Offspring cross(final Random rand, final GeneSequence other)
+    {
         final int pos = rand.nextInt(size());
         return cross(pos, other);
     }
@@ -167,7 +181,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *            the other sequence with which to cross with this sequence
      * @return the offspring resulting from the 'breeding' (crossing) of these two sequences
      */
-    public Offspring cross(final Probability probability, final GeneSequence other) {
+    public Offspring cross(final Probability probability, final GeneSequence other)
+    {
         final int pos = probability.nextInt(size());
         return cross(pos, other);
     }
@@ -179,16 +194,17 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *            the position at which the sequences will be crossed
      * @param other
      *            the other sequence with which to cross with this one
-     * 
      * @return the offspring from the cross
      */
-    public Offspring cross(final int pos, final GeneSequence other) {
+    public Offspring cross(final int pos, final GeneSequence other)
+    {
         assert size() == other.size();
 
         final GeneSequence copyA = copySequence();
         final GeneSequence copyB = other.copySequence();
 
-        for (int index = pos; index < size(); index++) {
+        for (int index = pos; index < size(); index++)
+        {
             final IGene<?> a = getGene(index).copy();
             final IGene<?> b = other.getGene(index).copy();
             copyA.setGene(index, b);
@@ -203,7 +219,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * 
      * @return a new mutated gene sequence created from this sequence
      */
-    public GeneSequence mutate() {
+    public GeneSequence mutate()
+    {
         final Probability probability = Probability.getInstance();
         return mutate(probability);
     }
@@ -213,16 +230,18 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *            the probability (random) object used to determine the gene which will be mutated
      * @return a new mutated gene sequence created from this sequence
      */
-    public GeneSequence mutate(final Probability probability) {
-        final int pos = probability.nextInt(genes.size());
+    public GeneSequence mutate(final Probability probability)
+    {
+        final int pos = probability.nextInt(this.genes.size());
         final float zeroToOne = probability.nextFloat();
-        final List<IGene<?>> copy = Lists.newArrayList(genes);
+        final List<IGene<?>> copy = Lists.newArrayList(this.genes);
         final IGene<?> mutated = copy.get(pos).mutate(zeroToOne);
         final IGene<?> previous = copy.set(pos, mutated);
-        if (previous.getValue().equals(mutated.getValue())) {
+        if (previous.getValue().equals(mutated.getValue()))
+        {
             final String format = "the gene's mutate method is broken. The mutated value is the same as the original value: %s == %s in %s for %d and %s";
-            throw new IllegalStateException(String.format(format, previous.getValue(), mutated.getValue(), copy,
-                    Integer.valueOf(pos), Float.valueOf(zeroToOne)));
+            throw new IllegalStateException(String.format(format, previous.getValue(), mutated.getValue(), copy, Integer.valueOf(pos),
+                    Float.valueOf(zeroToOne)));
         }
         return new GeneSequence(copy);
     }
@@ -231,9 +250,10 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param <T>
      * @param type
      */
-    final <T> void addGene(final IGenotype<T> type) {
+    final <T> void addGene(final IGenotype<T> type)
+    {
         markDirty();
-        final int position = genes.size();
+        final int position = this.genes.size();
         final IGene<?> newGene = type.createGene(position);
         putGeneInternal(newGene);
     }
@@ -241,14 +261,16 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     /**
      * @param newGene
      */
-    private void putGeneInternal(final IGene<?> newGene) {
-        genes.add(newGene);
+    private void putGeneInternal(final IGene<?> newGene)
+    {
+        this.genes.add(newGene);
         updateReferences(newGene);
 
     }
 
-    private void markDirty() {
-        cachedScore = null;
+    private void markDirty()
+    {
+        this.cachedScore = null;
     }
 
     /**
@@ -257,32 +279,37 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @return the gene value at the given index
      */
     @SuppressWarnings("unchecked")
-    public <T> T getGeneValue(final int index) {
+    public <T> T getGeneValue(final int index)
+    {
         final IGene<?> g = getGene(index);
         return (T) g.getValue();
     }
 
-    public int getGeneIntValue(final int index) {
+    public int getGeneIntValue(final int index)
+    {
         final Integer value = getGeneValue(index);
         return value.intValue();
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> IScore<T> getScore(final IGeneEvaluation<T> eval) {
-        if (cachedScore == null) {
-            cachedScore = eval.score(this);
+    public <T extends Comparable<T>> IScore<T> getScore(final IGeneEvaluation<T> eval)
+    {
+        if (this.cachedScore == null)
+        {
+            this.cachedScore = eval.score(this);
         }
-        return (IScore<T>) cachedScore;
+        return (IScore<T>) this.cachedScore;
     }
 
     /**
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (genes == null ? 0 : genes.hashCode());
+        result = prime * result + (this.genes == null ? 0 : this.genes.hashCode());
         return result;
     }
 
@@ -290,22 +317,30 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
+    public boolean equals(final Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
-        if (obj == null) {
+        if (obj == null)
+        {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
+        {
             return false;
         }
         final GeneSequence other = (GeneSequence) obj;
-        if (genes == null) {
-            if (other.genes != null) {
+        if (this.genes == null)
+        {
+            if (other.genes != null)
+            {
                 return false;
             }
-        } else if (!genes.equals(other.genes)) {
+        }
+        else if (!this.genes.equals(other.genes))
+        {
             return false;
         }
         return true;
@@ -315,7 +350,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @return the string representation of these sequence
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         final String separator = "-";
         return toString(separator);
     }
@@ -324,28 +360,31 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param separator
      * @return a string representation of this sequence
      */
-    public String toString(final String separator) {
-        final String string = Joiner.on(separator).join(genes);
-        return cachedScore == null ? string : String.format("[%s] %s", cachedScore, string);
+    public String toString(final String separator)
+    {
+        final String string = Joiner.on(separator).join(this.genes);
+        return this.cachedScore == null ? string : String.format("[%s] %s", this.cachedScore, string);
     }
 
     /**
-     * return the genes which differ between this and the given strain.
-     * 
-     * The first object in the difference ({@link Pair}) will be the index of the difference. The second object in the
-     * difference ({@link Pair}) will be the different gene from the 'other' parameter's sequence.
+     * return the genes which differ between this and the given strain. The first object in the difference ({@link Pair}) will be the index
+     * of the difference. The second object in the difference ({@link Pair}) will be the different gene from the 'other' parameter's
+     * sequence.
      * 
      * @param other
      *            the gene sequence to compare to
      * @return a collection of differences
      */
-    public Collection<Pair<Integer, IGene<?>>> diff(final GeneSequence other) {
+    public Collection<Pair<Integer, IGene<?>>> diff(final GeneSequence other)
+    {
         final List<Pair<Integer, IGene<?>>> diff = Lists.newArrayList();
         assert size() == other.size();
-        for (int i = 0; i < size(); i++) {
+        for (int i = 0; i < size(); i++)
+        {
             final IGene<?> geneA = getGene(i);
             final IGene<?> geneB = other.getGene(i);
-            if (!geneA.equals(geneB)) {
+            if (!geneA.equals(geneB))
+            {
                 diff.add(new Pair<Integer, IGene<?>>(Integer.valueOf(i), geneB));
             }
         }
@@ -360,20 +399,23 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @return the single difference
      * @throws IllegalArgumentException
      */
-    public Pair<Integer, IGene<?>> onlyDiff(final GeneSequence other) throws IllegalArgumentException {
+    public Pair<Integer, IGene<?>> onlyDiff(final GeneSequence other) throws IllegalArgumentException
+    {
         final Collection<Pair<Integer, IGene<?>>> diff = diff(other);
-        if (diff.size() != 1) {
+        if (diff.size() != 1)
+        {
             throw new IllegalArgumentException(String.format("diff between %s and %s => %s", this, other, diff));
         }
         return Iterables.getOnlyElement(diff);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> IGene<T> setGene(final int index, final IGene<T> newGene) {
+    public <T> IGene<T> setGene(final int index, final IGene<T> newGene)
+    {
         final GeneImpl<T> copy = copyGene(index, newGene);
-        final IGene<?> replaced = genes.set(index, copy);
-        genesByType.remove(replaced.getType(), replaced);
-        genesByValue.remove(replaced.getValue(), replaced);
+        final IGene<?> replaced = this.genes.set(index, copy);
+        this.genesByType.remove(replaced.getType(), replaced);
+        this.genesByValue.remove(replaced.getValue(), replaced);
 
         updateReferences(copy);
 
@@ -384,9 +426,10 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param <T>
      * @param copy
      */
-    private <T> void updateReferences(final IGene<T> copy) {
-        genesByType.put(copy.getType(), copy);
-        genesByValue.put(copy.getValue(), copy);
+    private <T> void updateReferences(final IGene<T> copy)
+    {
+        this.genesByType.put(copy.getType(), copy);
+        this.genesByValue.put(copy.getValue(), copy);
     }
 
     /**
@@ -395,12 +438,14 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param newGene
      * @return
      */
-    private <T> GeneImpl<T> copyGene(final int index, final IGene<T> newGene) {
+    private <T> GeneImpl<T> copyGene(final int index, final IGene<T> newGene)
+    {
         final GeneImpl<T> newG = new GeneImpl<T>(newGene.getType(), index, newGene.getValue());
         return newG;
     }
 
-    public Offspring crossBySwap(final Probability probability, final GeneSequence other) {
+    public Offspring crossBySwap(final Probability probability, final GeneSequence other)
+    {
         final int position = probability.nextInt(size());
         return crossBySwap(position, other);
     }
@@ -410,13 +455,16 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param other
      * @return
      */
-    public Offspring crossBySwap(final int pos, final GeneSequence other) {
+    public Offspring crossBySwap(final int pos, final GeneSequence other)
+    {
         final GeneSequence copyA = copySequence();
         final GeneSequence copyB = other.copySequence();
 
         final IGene<?> geneToSwap = copyA.getGene(pos);
-        for (final IGene<?> candidate : copyB.getGenesByType(geneToSwap.getType())) {
-            if (!candidate.getValue().equals(geneToSwap.getValue())) {
+        for (final IGene<?> candidate : copyB.getGenesByType(geneToSwap.getType()))
+        {
+            if (!candidate.getValue().equals(geneToSwap.getValue()))
+            {
                 copyA.setGene(pos, candidate);
                 copyB.setGene(candidate.getPosition(), geneToSwap);
                 break;
@@ -427,9 +475,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     }
 
     /**
-     * swap two type values, maintaining value-uniqueness across the type.
-     * 
-     * consider the two sequences:
+     * swap two type values, maintaining value-uniqueness across the type. consider the two sequences:
      * 
      * <pre>
      * 2-1-a-3-4
@@ -450,8 +496,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *       |
      * </pre>
      * 
-     * But if we are to maintain unique values across type (and assuming the numeric genes all came from the same genome
-     * and hence are the same 'type'), the same swap then triggers:
+     * But if we are to maintain unique values across type (and assuming the numeric genes all came from the same genome and hence are the
+     * same 'type'), the same swap then triggers:
      * 
      * <pre>
      * 2-1-a-3-4
@@ -484,7 +530,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param other
      * @return the offspring
      */
-    public Offspring crossBySwapUniqueValuesByType(final int pos, final GeneSequence other) {
+    public Offspring crossBySwapUniqueValuesByType(final int pos, final GeneSequence other)
+    {
         final GeneSequence copyA = copySequence();
         final GeneSequence copyB = other.copySequence();
 
@@ -500,7 +547,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      *            the other sequence with which to cross
      * @return the offspring
      */
-    public Offspring crossBySwapUniqueValuesByType(final Probability probability, final GeneSequence other) {
+    public Offspring crossBySwapUniqueValuesByType(final Probability probability, final GeneSequence other)
+    {
         final int index = probability.nextInt(size());
         return crossBySwapUniqueValuesByType(index, other);
     }
@@ -510,8 +558,8 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param other
      * @return
      */
-    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos,
-            final GeneSequence other) {
+    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos, final GeneSequence other)
+    {
         //
         // 1) pick the gene to swap 'A' from this sequence
         //
@@ -527,16 +575,17 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         //
         // 3) if the gene to swap has the same value, then we're done (nowt to do)
         //
-        if (sourceGeneToSwap.getValue().equals(targetGeneToSwap.getValue())) {
+        if (sourceGeneToSwap.getValue().equals(targetGeneToSwap.getValue()))
+        {
             return new Offspring(copyA, copyB);
         }
 
         //
         // 4) find the other gene in 'other' with the same value and type as the source gene we're swapping
         //
-        final IGene<?> targetGeneOfSameValue = copyB.getGeneOfTypeAndValue(sourceGeneToSwap.getType(), sourceGeneToSwap
-                .getValue());
-        if (targetGeneOfSameValue != null) {
+        final IGene<?> targetGeneOfSameValue = copyB.getGeneOfTypeAndValue(sourceGeneToSwap.getType(), sourceGeneToSwap.getValue());
+        if (targetGeneOfSameValue != null)
+        {
             assert targetGeneOfSameValue.getType().equals(sourceGeneToSwap.getType());
             assert targetGeneOfSameValue.getValue().equals(sourceGeneToSwap.getValue());
             assert targetGeneOfSameValue.getPosition() != targetGeneToSwap.getPosition();
@@ -553,15 +602,16 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         //
         // 6) if the swapped gene wasn't already in the target sequence, then we won't have a duplicate
         //
-        if (targetGeneOfSameValue == null) {
+        if (targetGeneOfSameValue == null)
+        {
             return new Offspring(copyA, copyB);
         }
 
         //
         // 7) if all values are unique in either sequence, then we're done
         //
-        if (copyA.hasUniqueValuesForType(sourceGeneToSwap.getType())
-                && copyB.hasUniqueValuesForType(sourceGeneToSwap.getType())) {
+        if (copyA.hasUniqueValuesForType(sourceGeneToSwap.getType()) && copyB.hasUniqueValuesForType(sourceGeneToSwap.getType()))
+        {
             assert copyB.hasUniqueValuesForType(sourceGeneToSwap.getType());
             return new Offspring(copyA, copyB);
         }
@@ -576,11 +626,13 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param type
      * @return true if all genes of the given type have unique values
      */
-    public final boolean hasUniqueValuesForType(final IGenotype<?> type) {
+    public final boolean hasUniqueValuesForType(final IGenotype<?> type)
+    {
         final Collection<IGene<?>> gbt = getGenesByType(type);
         final Collection<Object> values = Collections2.transform(gbt, new Function<IGene<?>, Object>() {
             @Override
-            public Object apply(final IGene<?> arg0) {
+            public Object apply(final IGene<?> arg0)
+            {
                 return arg0.getValue();
             }
         });
@@ -588,16 +640,19 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         return uniqueValues;
     }
 
-    final GeneSequence copySequence() {
+    final GeneSequence copySequence()
+    {
         final List<IGene<?>> geneCopy = newGenes();
-        for (int index = 0; index < size(); index++) {
+        for (int index = 0; index < size(); index++)
+        {
             final IGene<?> a = getGene(index).copy();
             geneCopy.add(a);
         }
         return new GeneSequence(geneCopy);
     }
 
-    private List<IGene<?>> newGenes() {
+    private List<IGene<?>> newGenes()
+    {
         return Lists.newArrayListWithExpectedSize(size());
     }
 }

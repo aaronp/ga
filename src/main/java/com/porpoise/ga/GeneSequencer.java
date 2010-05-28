@@ -5,24 +5,28 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 /**
- * 
  * Creates gene sequences based on given {@link Genotype} patterns
  */
-public final class GeneSequencer {
+public final class GeneSequencer
+{
 
     private final List<IGenotype<?>> genotypes;
 
-    public GeneSequencer(final IGenotype<?>... genotypeValues) {
-        genotypes = Lists.newArrayList(genotypeValues);
+    public GeneSequencer(final IGenotype<?>... genotypeValues)
+    {
+        this.genotypes = Lists.newArrayList(genotypeValues);
     }
 
-    public boolean addGenotype(final IGenotype<?> type) {
-        return genotypes.add(type);
+    public boolean addGenotype(final IGenotype<?> type)
+    {
+        return this.genotypes.add(type);
     }
 
-    public GeneSequence create() {
+    public GeneSequence create()
+    {
         final GeneSequence seq = newSequence();
-        for (final IGenotype<?> type : genotypes) {
+        for (final IGenotype<?> type : this.genotypes)
+        {
             seq.addGene(type);
         }
         return seq;
@@ -31,7 +35,8 @@ public final class GeneSequencer {
     /**
      * @return
      */
-    protected GeneSequence newSequence() {
+    protected GeneSequence newSequence()
+    {
         final GeneSequence seq = new GeneSequence();
         return seq;
     }
@@ -43,9 +48,11 @@ public final class GeneSequencer {
      *            the initial size
      * @return a new gene pool of the given size
      */
-    public <T extends Comparable<T>> IGenePool newPool(final IGeneEvaluation<T> criteria, final int size) {
+    public <T extends Comparable<T>> IGenePool newPool(final IGeneEvaluation<T> criteria, final int size)
+    {
         final GenePool<T> pool = new GenePool<T>(criteria);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
+        {
             pool.populate(create());
         }
         return pool;
