@@ -18,10 +18,10 @@ public interface IGene<T> {
      * 
      * @return the gene's type
      */
-    IGenotype getType();
+    IGenotype<T> getType();
 
     /**
-     * @return the zero-based position (index)
+     * @return the zero-based position (index) of this gene in its gene sequence
      */
     int getPosition();
 
@@ -32,5 +32,8 @@ public interface IGene<T> {
      */
     IGene<T> mutate(float random);
 
-    IGene<?> copy();
+    /**
+     * @return a copy of this gene
+     */
+    IGene<T> copy();
 }

@@ -2,11 +2,11 @@ package com.porpoise.ga;
 
 public class GeneImpl<T> implements IGene<T> {
 
-    private final int       index;
-    private final T         data;
-    private final IGenotype genotype;
+    private final int          index;
+    private final T            data;
+    private final IGenotype<T> genotype;
 
-    public GeneImpl(final IGenotype type, final int geneIndex, final T value) {
+    public GeneImpl(final IGenotype<T> type, final int geneIndex, final T value) {
         this.genotype = type;
         this.index = geneIndex;
         this.data = value;
@@ -17,7 +17,7 @@ public class GeneImpl<T> implements IGene<T> {
     }
 
     @Override
-    public IGenotype getType() {
+    public IGenotype<T> getType() {
         return genotype;
     }
 

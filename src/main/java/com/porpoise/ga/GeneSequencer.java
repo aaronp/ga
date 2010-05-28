@@ -10,19 +10,19 @@ import com.google.common.collect.Lists;
  */
 public final class GeneSequencer {
 
-    private final List<Genotype<?>> genotypes;
+    private final List<IGenotype<?>> genotypes;
 
-    public GeneSequencer(final Genotype<?>... genotypeValues) {
+    public GeneSequencer(final IGenotype<?>... genotypeValues) {
         genotypes = Lists.newArrayList(genotypeValues);
     }
 
-    public boolean addGenotype(final Genotype<?> type) {
+    public boolean addGenotype(final IGenotype<?> type) {
         return genotypes.add(type);
     }
 
     public GeneSequence create() {
         final GeneSequence seq = newSequence();
-        for (final Genotype<?> type : genotypes) {
+        for (final IGenotype<?> type : genotypes) {
             seq.addGene(type);
         }
         return seq;

@@ -83,7 +83,7 @@ public class GeneSequenceTest {
         final GeneSequence seq1 = sequencer.create();
         final IGene<?> firstGene = seq1.getGene(0);
         final Object value = firstGene.getValue();
-        final IGenotype type = firstGene.getType();
+        final IGenotype<?> type = firstGene.getType();
         final Collection<IGene<?>> genes = seq1.getGenesByTypeAndValue(type, value);
         Assert.assertTrue(genes.contains(firstGene));
         assertTypeAndValue(genes, value, type);
@@ -109,7 +109,38 @@ public class GeneSequenceTest {
         System.out.println(seq1);
         System.out.println(seq2);
         System.out.println(swapped);
+    }
 
+    @Test
+    public void test_swapUnique() {
+
+        final GeneSequence seq1 = new GeneSequence();
+        int index = 0;
+        seq1.addGene(new GeneImpl<Integer>(numbers, index++, Integer.valueOf(1)));
+        final GeneSequence seq2 = new GeneSequence();
+
+        //
+        // between the two sequences, there will be one number shared. find that index
+        //
+        int pos = -1;
+        final Collection<IGene<?>> g1 = seq1.getGenesByType(t1);
+        for (final IGene<?> g : g1) {
+            final IGene<?> gene = seq2.getGeneOfTypeAndValue(t1, g.getValue());
+            if (gene != null) {
+                pos = g.getPosition();
+                break;
+            }
+        }
+        if (pos == -1) {
+            return;
+        }
+        System.out.println("********swap***********");
+        System.out.println(seq1);
+        System.out.println(seq2);
+        System.out.println("swapping at pos " + pos);
+        final Offspring swapped = seq1.crossBySwapUniqueValuesInType(pos, seq2);
+        System.out.println(swapped);
+        System.out.println("********swap***********");
     }
 
     /**

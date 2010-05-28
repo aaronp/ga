@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 /**
  * A GeneSequence represents a specific sequence of {@link IGene}s which may be decoded to represent a specific
@@ -25,10 +26,10 @@ import com.google.common.collect.Multimap;
  */
 public final class GeneSequence implements Iterable<IGene<?>> {
 
-    private IScore<?>                           cachedScore;
-    private final List<IGene<?>>                genes;
-    private final Multimap<Object, IGene<?>>    genesByValue;
-    private final Multimap<IGenotype, IGene<?>> genesByType;
+    private IScore<?>                              cachedScore;
+    private final List<IGene<?>>                   genes;
+    private final Multimap<Object, IGene<?>>       genesByValue;
+    private final Multimap<IGenotype<?>, IGene<?>> genesByType;
 
     /**
      * @param geneValues
@@ -77,32 +78,35 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param value
      * @return the genes which have the given type and value
      */
-    public Collection<IGene<?>> getGenesByTypeAndValue(final IGenotype type, final Object value) {
+    public Collection<IGene<?>> getGenesByTypeAndValue(final IGenotype<?> type, final Object value) {
         final Collection<IGene<?>> byValue = getGenesByValue(value);
         final Collection<IGene<?>> byType = getGenesByType(type);
         return Collections2.filter(byValue, Predicates.in(byType));
     }
 
     /**
-     * the single gene of the given type and value. If no gene exists with the specified type and value, then a
-     * {@link NoSuchElementException} will be thrown. If multiple genes exist with the given type and value, then an
+     * the single gene of the given type and value. If no gene exists with the specified type and value, then a null
+     * value will be returned. If multiple genes exist with the given type and value, then an
      * {@link IllegalArgumentException} will be thrown.
      * 
      * @param type
      * @param value
      * @return the single gene of the given type and value
-     * @throws NoSuchElementException
-     *             , IllegalArgumentException
+     * @throws IllegalArgumentException
      */
-    public IGene<?> getGeneOfTypeAndValue(final IGenotype type, final Object value) {
-        return Iterables.getOnlyElement(getGenesByTypeAndValue(type, value));
+    public IGene<?> getGeneOfTypeAndValue(final IGenotype<?> type, final Object value) {
+        final Collection<IGene<?>> genesByTypeAndValue = getGenesByTypeAndValue(type, value);
+        if (genesByTypeAndValue.isEmpty()) {
+            return null;
+        }
+        return Iterables.getOnlyElement(genesByTypeAndValue);
     }
 
     /**
      * @param type
      * @return a collection of all genes of the given type
      */
-    public Collection<IGene<?>> getGenesByType(final IGenotype type) {
+    public Collection<IGene<?>> getGenesByType(final IGenotype<?> type) {
         return genesByType.get(type);
     }
 
@@ -204,11 +208,10 @@ public final class GeneSequence implements Iterable<IGene<?>> {
     }
 
     /**
-     * 
      * @param <T>
      * @param type
      */
-    final <T> void addGene(final Genotype<T> type) {
+    final <T> void addGene(final IGenotype<T> type) {
         markDirty();
         final int position = genes.size();
         final IGene<?> newGene = type.createGene(position);
@@ -344,7 +347,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
 
     @SuppressWarnings("unchecked")
     public <T> IGene<T> setGene(final int index, final IGene<T> newGene) {
-        final GeneImpl<T> copy = copy(index, newGene);
+        final GeneImpl<T> copy = copyGene(index, newGene);
         final IGene<?> replaced = genes.set(index, copy);
         genesByType.remove(replaced.getType(), replaced);
         genesByValue.remove(replaced.getValue(), replaced);
@@ -369,7 +372,7 @@ public final class GeneSequence implements Iterable<IGene<?>> {
      * @param newGene
      * @return
      */
-    private <T> GeneImpl<T> copy(final int index, final IGene<T> newGene) {
+    private <T> GeneImpl<T> copyGene(final int index, final IGene<T> newGene) {
         final GeneImpl<T> newG = new GeneImpl<T>(newGene.getType(), index, newGene.getValue());
         return newG;
     }
@@ -462,28 +465,90 @@ public final class GeneSequence implements Iterable<IGene<?>> {
         final GeneSequence copyA = copySequence();
         final GeneSequence copyB = other.copySequence();
 
+        return swapUniqueRecursive(copyA, copyB, pos, other);
+    }
+
+    /**
+     * @param pos
+     * @param other
+     * @return
+     */
+    private Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos,
+            final GeneSequence other) {
         //
-        // 1) pick the gene to swap
+        // 1) pick the gene to swap 'A' from this sequence
         //
+        final IGene<?> sourceGeneToSwap = copyA.getGene(pos);
 
         //
-        // 2) find the unique position of the same gene in the other sequence
+        // 2) get the gene in the same position from the other sequence
+        // (assert it is of the same type)
         //
+        final IGene<?> targetGeneToSwap = copyB.getGene(pos);
+        assert sourceGeneToSwap.getType().equals(targetGeneToSwap.getType());
 
         //
-        // 3) if it is the same, then we're done. If not
+        // 3) if the gene to swap has the same value, then we're done (nowt to do)
         //
-
-        final IGene<?> geneToSwap = copyA.getGene(pos);
-        for (final IGene<?> candidate : copyB.getGenesByType(geneToSwap.getType())) {
-            if (!candidate.getValue().equals(geneToSwap.getValue())) {
-                copyA.setGene(pos, candidate);
-                copyB.setGene(candidate.getPosition(), geneToSwap);
-                break;
-            }
+        if (sourceGeneToSwap.getValue().equals(targetGeneToSwap.getValue())) {
+            return new Offspring(copyA, copyB);
         }
 
-        return new Offspring(copyA, copyB);
+        //
+        // 4) find the other gene in 'other' with the same value and type as the source gene we're swapping
+        //
+        final IGene<?> targetGeneOfSameValue = copyB.getGeneOfTypeAndValue(sourceGeneToSwap.getType(), sourceGeneToSwap
+                .getValue());
+        if (targetGeneOfSameValue != null) {
+            assert targetGeneOfSameValue.getType().equals(sourceGeneToSwap.getType());
+            assert targetGeneOfSameValue.getValue().equals(sourceGeneToSwap.getValue());
+            assert targetGeneOfSameValue.getPosition() != targetGeneToSwap.getPosition();
+        }
+
+        //
+        // 5) swap the genes
+        //
+        final int index = sourceGeneToSwap.getPosition();
+        assert index == targetGeneToSwap.getPosition();
+        copyA.setGene(index, targetGeneToSwap);
+        copyB.setGene(sourceGeneToSwap.getPosition(), sourceGeneToSwap);
+
+        //
+        // 6) if the swapped gene wasn't already in the target sequence, then we won't have a duplicate
+        //
+        if (targetGeneOfSameValue == null) {
+            return new Offspring(copyA, copyB);
+        }
+
+        //
+        // 7) if all values are unique in either sequence, then we're done
+        //
+        if (copyA.hasUniqueValuesForType(sourceGeneToSwap.getType())
+                && copyB.hasUniqueValuesForType(sourceGeneToSwap.getType())) {
+            assert copyB.hasUniqueValuesForType(sourceGeneToSwap.getType());
+            return new Offspring(copyA, copyB);
+        }
+
+        //
+        // 8) otherwise, recurse on step #4's position
+        //
+        return swapUniqueRecursive(copyA, copyB, targetGeneOfSameValue.getPosition(), other);
+    }
+
+    /**
+     * @param type
+     * @return true if all genes of the given type have unique values
+     */
+    public final boolean hasUniqueValuesForType(final IGenotype<?> type) {
+        final Collection<IGene<?>> gbt = getGenesByType(type);
+        final Collection<Object> values = Collections2.transform(gbt, new Function<IGene<?>, Object>() {
+            @Override
+            public Object apply(final IGene<?> arg0) {
+                return arg0.getValue();
+            }
+        });
+        final boolean uniqueValues = Sets.newHashSet(values).size() == gbt.size();
+        return uniqueValues;
     }
 
     final GeneSequence copySequence() {

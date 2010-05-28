@@ -11,6 +11,7 @@ import com.porpoise.ga.IChlorine;
 import com.porpoise.ga.IGene;
 import com.porpoise.ga.IGeneEvaluation;
 import com.porpoise.ga.IGenePool;
+import com.porpoise.ga.IGenotype;
 import com.porpoise.ga.Offspring;
 import com.porpoise.ga.Pair;
 import com.porpoise.ga.Probability;
@@ -92,7 +93,7 @@ public class Main {
     private static GeneticAlgorithm newAlgorithm(final Probability config) {
 
         // TODO - use the other one we created elsewhere
-        final Genotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
+        final IGenotype<Integer> numberType = Genotype.of(Integer.valueOf(1));
 
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
@@ -101,7 +102,7 @@ public class Main {
             protected GeneSequence doMutate(final GeneSequence seqOne) {
 
                 final GeneSequence mutation = seqOne.mutate(getProbability());
-                if (true) {
+                if (false) {
                     return mutation;
                 }
 
@@ -141,8 +142,8 @@ public class Main {
      * @return
      */
     private static GeneSequencer createSequencer(final Integer[] numbers) {
-        final Genotype<Integer> numberType = Genotype.of(numbers);
-        final Genotype<Operator> operatorType = Genotype.of(Operator.values());
+        final IGenotype<Integer> numberType = Genotype.of(numbers);
+        final IGenotype<Operator> operatorType = Genotype.of(Operator.values());
 
         final GeneSequencer seq = new GeneSequencer(numberType);
         final int count = numbers.length - 1;
