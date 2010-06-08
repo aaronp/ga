@@ -44,9 +44,37 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<!-- 
+						<phase>test</phase>
+					 -->
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.porpoise.ga.countdown.Main</mainClass>
+					<arguments>
+						<argument>45</argument>
+						<argument>5</argument>
+						<argument>67</argument>
+						<argument>82</argument>
+						<argument>12</argument>
+						<argument>9</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
 
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

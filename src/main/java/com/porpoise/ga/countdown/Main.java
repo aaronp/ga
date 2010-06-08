@@ -11,7 +11,7 @@ import com.porpoise.ga.Probability;
 import com.porpoise.ga.Result;
 
 /**
- * runner class for the countdown application
+ * main entry point the countdown application
  */
 public class Main
 {
@@ -23,6 +23,11 @@ public class Main
             printUsage(System.out);
             return;
         }
+
+        // initialise the 'Probability' class. This will provide a shared instance which
+        // may be used within the Countdown application. It serves as a configuration,
+        // detailing how over genes should 'cross' or 'mutate', as well as methods for
+        // retrieving random numbers
         Probability.init(Probability.DEFAULT_CROSSOVER, 0.1F);
 
         final int target = Integer.parseInt(args[0]);
