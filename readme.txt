@@ -2,6 +2,6 @@ An implementation of a genetic algorithm in Java. The intent is to be reusable, 
 
 Please see the wiki page at
 
-http://wiki.github.com/aaronp/pface/
+http://wiki.github.com/aaronp/ga/
 
 for more information.
