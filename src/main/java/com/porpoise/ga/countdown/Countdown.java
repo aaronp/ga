@@ -106,4 +106,27 @@ public enum Countdown
         return seq;
     }
 
+    /**
+     * @param seq
+     *            the gene sequence to convert to a String
+     * @return a string value of a solution
+     */
+    public static String toString(final GeneSequence seq)
+    {
+        return FormulaDecoder.toString(seq);
+    }
+
+    /**
+     * @param seq
+     *            the gene sequence to convert to a String
+     * @return a string value of a solution
+     */
+    public static String toString(final Result result)
+    {
+        if (result == null)
+        {
+            return "null";
+        }
+        return toString(result.getSolution());
+    }
 }

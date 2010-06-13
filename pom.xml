@@ -4,7 +4,7 @@
 	<groupId>porpoiseltd</groupId>
 	<artifactId>ga</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.0.1</version>
 	<name>Genetic Algorithm</name>
 	<url>http://maven.apache.org</url>
 
