@@ -79,7 +79,7 @@ class FormulaDecoder
             final int value = seq.getGeneIntValue(index);
             if (!uniqueValues.add(Integer.valueOf(value)))
             {
-                return false;
+                return true;
             }
         }
 

@@ -1,0 +1,4 @@
+Countdown
+=======
+
+A command-line app which takes in a sequence of numbers and tries to find the last one (the target number) by using the previous inputs

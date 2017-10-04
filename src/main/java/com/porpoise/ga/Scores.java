@@ -86,7 +86,6 @@ public enum Scores
     }
 
     /**
-     * @param value
      * @return a score for the given int value
      */
     public static ComparableScore<Integer> valueOf(final int value)
@@ -110,7 +109,6 @@ public enum Scores
     }
 
     /**
-     * @param value
      * @return a score for the given int value
      */
     public static IScore<Integer> invalidInt()

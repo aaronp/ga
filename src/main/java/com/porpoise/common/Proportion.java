@@ -145,7 +145,7 @@ public final class Proportion
      * <p>
      * Given this proportional representation, return a number from the given range, considering the low numbers the 'top' of the range.
      * </p>
-     * <p>
+     * 
      * For example, say this proportion says in essence:
      * <ol>
      * <li>70% of the time, choose a number from the top 20% of the range</li>
@@ -153,7 +153,7 @@ public final class Proportion
      * <li>5% of the time, choose a number from the remaining 70% of the range</li>
      * </ol>
      * The 'ascending' bit of {@link #chooseAscending(int)} means that 0 is considered the 'top', and 'range' is considered the bottom
-     * </p>
+
      * 
      * @param range
      *            The range from which a number will be returned, exclusive

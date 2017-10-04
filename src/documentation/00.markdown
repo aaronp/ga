@@ -1,0 +1,6 @@
+Genetic Algorithms
+=======
+
+*GA* is a java library for executing genetic algorithms
+
+A 'Countdown' example is provided whereby some target number is requested given some numeric inputs

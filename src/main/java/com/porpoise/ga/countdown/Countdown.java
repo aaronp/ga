@@ -1,26 +1,15 @@
 package com.porpoise.ga.countdown;
 
-import com.porpoise.ga.GeneSequence;
-import com.porpoise.ga.GeneSequencer;
-import com.porpoise.ga.GeneticAlgorithm;
-import com.porpoise.ga.Genotype;
-import com.porpoise.ga.IChlorine;
-import com.porpoise.ga.IGeneEvaluation;
-import com.porpoise.ga.IGenePool;
-import com.porpoise.ga.IGenotype;
-import com.porpoise.ga.Probability;
-import com.porpoise.ga.Result;
+import com.porpoise.ga.*;
 
 /**
  * Countdown is a functional utility class which, given a collection of numbers and a target (goal), It returns a {@link Result} containing
  * the way those numbers can be combined to reach the goal.
  */
-public enum Countdown
-{
+public enum Countdown {
     ;//
 
-    public static Result solve(final int target, final Integer[] numbers)
-    {
+    public static Result solve(final int target, final Integer[] numbers) {
 
         //
         // the probability object is really a configuration or probabilities (cross rates, cull rates, mutations, ...).
@@ -31,8 +20,7 @@ public enum Countdown
         return solve(config, target, numbers);
     }
 
-    public static Result solve(final Probability config, final int target, final Integer... numbers)
-    {
+    public static Result solve(final Probability config, final int target, final Integer... numbers) {
         // all our algorithm really needs is an initial gene pool,
         // as the gene pool knows how to maintain (cull) itself
         final IGenePool original;
@@ -54,10 +42,8 @@ public enum Countdown
             // ... and use that sequence to create an initial gene pool of a given size
             original = seq.newPool(eval, someInitialPoolSize);
 
-            for (final GeneSequence s : original)
-            {
-                if (!FormulaDecoder.isValid(s))
-                {
+            for (final GeneSequence s : original) {
+                if (!FormulaDecoder.isValid(s)) {
                     throw new IllegalStateException("invalid original sequence:" + s);
                 }
             }
@@ -74,12 +60,7 @@ public enum Countdown
         return result;
     }
 
-    /**
-     * @param config
-     * @return a new genetic algorithm based on the given configuration
-     */
-    private static GeneticAlgorithm newAlgorithm(final Probability config)
-    {
+    private static GeneticAlgorithm newAlgorithm(final Probability config) {
         // The algorithm uses an IChlorine instance which is responsible
         // for 'evolving' the gene pool through each generation
         final IChlorine chlorine = new CountdownChlorine(config);
@@ -87,19 +68,13 @@ public enum Countdown
         return new GeneticAlgorithm(chlorine);
     }
 
-    /**
-     * @param numbers
-     * @return
-     */
-    private static GeneSequencer createSequencer(final Integer[] numbers)
-    {
+    private static GeneSequencer createSequencer(final Integer[] numbers) {
         final IGenotype<Integer> numberType = Genotype.of(numbers);
         final IGenotype<Operator> operatorType = Genotype.of(Operator.values());
 
         final GeneSequencer seq = new GeneSequencer(numberType);
         final int count = numbers.length - 1;
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             seq.addGenotype(operatorType);
             seq.addGenotype(numberType);
         }
@@ -107,24 +82,19 @@ public enum Countdown
     }
 
     /**
-     * @param seq
-     *            the gene sequence to convert to a String
+     * @param seq the gene sequence to convert to a String
      * @return a string value of a solution
      */
-    public static String toString(final GeneSequence seq)
-    {
+    public static String toString(final GeneSequence seq) {
         return FormulaDecoder.toString(seq);
     }
 
     /**
-     * @param seq
-     *            the gene sequence to convert to a String
+     * @param result the gene sequence to convert to a String
      * @return a string value of a solution
      */
-    public static String toString(final Result result)
-    {
-        if (result == null)
-        {
+    public static String toString(final Result result) {
+        if (result == null) {
             return "null";
         }
         return toString(result.getSolution());

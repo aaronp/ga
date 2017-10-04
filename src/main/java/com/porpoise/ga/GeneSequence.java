@@ -399,8 +399,7 @@ public final class GeneSequence implements Iterable<IGene<?>>
     /**
      * method for getting the single difference between two genes. If there are any fewer or more than one difference an
      * IllegalArgumentException is thrown
-     * 
-     * @param mutation
+     *
      * @return the single difference
      * @throws IllegalArgumentException
      */
@@ -567,8 +566,6 @@ public final class GeneSequence implements Iterable<IGene<?>>
     }
 
     /**
-     * see {@link #crossBySwapUniqueValuesByType(int, GeneSequence)}
-     * 
      * @param probability
      *            the probability used to find a random pivot point at which to cross
      * @param other
@@ -581,11 +578,6 @@ public final class GeneSequence implements Iterable<IGene<?>>
         return crossBySwapUniqueValuesByType(index, other);
     }
 
-    /**
-     * @param pos
-     * @param other
-     * @return
-     */
     static final Offspring swapUniqueRecursive(final GeneSequence copyA, final GeneSequence copyB, final int pos)
     {
         //
