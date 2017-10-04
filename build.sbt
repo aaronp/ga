@@ -10,7 +10,9 @@ sourceDirectory in Pamflet := sourceDirectory.value / "documentation"
 
 siteSubdirName in SiteScaladoc := "api/latest"
 
-mainClass in(Compile, run) := Some("com.porpoise.ga.countdown.Main")
+mainClass  := Some("com.porpoise.ga.countdown.Main")
+
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
 
 val repo = "ga"
 
@@ -48,22 +50,23 @@ pomExtra in Global := {
 }
 
 
-test in(assembly) := {}
-
 dockerfile in docker := {
   // The assembly task generates a fat JAR file
   val artifact: File = assembly.value
-  val artifactTargetPath = s"/app/${artifact.name}"
 
+  val resDir = (resourceDirectory in Compile).value
+  val entrypointPath = resDir.toPath.resolve("entrypoint.sh").toFile
+
+  //
+  // see https://forums.docker.com/t/is-it-possible-to-pass-arguments-in-dockerfile/14488
+  // for passing in args to docker in run (which basically just says to use $@)
+  //
   new Dockerfile {
     from("java")
-    expose(7770)
-    run("mkdir", "-p", "/data")
-    run("mkdir", "-p", "/config")
-    env("DATA_DIR", "/data")
-    volume("/data")
-    volume("/config")
-    add(artifact, artifactTargetPath)
-    entryPoint("java", "-cp", "/config", "-jar", artifactTargetPath)
+    maintainer("Aaron Pritzlaff")
+    add(artifact, "ga.jar")
+    add(entrypointPath, "/entrypoint.sh")
+    run("chmod", "777", "/entrypoint.sh")
+    entryPoint("/entrypoint.sh")
   }
 }

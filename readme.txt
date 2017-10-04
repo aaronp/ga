@@ -5,3 +5,16 @@ Please see the wiki page at
 http://wiki.github.com/aaronp/ga/
 
 for more information.
+
+## Build/run
+
+sbt docker
+
+and then run either w/ some file input, e.g. given the file ~/input/x on the host system:
+
+docker run -v ~/input/:/foo com.github.aaronp/ga /foo/x
+
+or just specify the numeric inputs directly:
+
+
+docker run com.github.aaronp/ga 1 2 3 4 5
