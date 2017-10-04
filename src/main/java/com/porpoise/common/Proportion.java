@@ -145,7 +145,7 @@ public final class Proportion
      * <p>
      * Given this proportional representation, return a number from the given range, considering the low numbers the 'top' of the range.
      * </p>
-     * 
+     *
      * For example, say this proportion says in essence:
      * <ol>
      * <li>70% of the time, choose a number from the top 20% of the range</li>
