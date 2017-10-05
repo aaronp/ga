@@ -49,13 +49,17 @@ pomExtra in Global := {
     </developers>
 }
 
+imageNames in docker := Seq(
+  ImageName(s"porpoiseltd/${name.value}:latest")
+)
 
 dockerfile in docker := {
   // The assembly task generates a fat JAR file
   val artifact: File = assembly.value
 
   val resDir = (resourceDirectory in Compile).value
-  val entrypointPath = resDir.toPath.resolve("entrypoint.sh").toFile
+  val entrypointPath = resDir.toPath.resolve("ga.sh").toFile
+  val example = resDir.toPath.resolve("simple.example").toFile
 
   //
   // see https://forums.docker.com/t/is-it-possible-to-pass-arguments-in-dockerfile/14488
@@ -64,9 +68,12 @@ dockerfile in docker := {
   new Dockerfile {
     from("java")
     maintainer("Aaron Pritzlaff")
-    add(artifact, "ga.jar")
-    add(entrypointPath, "/entrypoint.sh")
-    run("chmod", "777", "/entrypoint.sh")
-    entryPoint("/entrypoint.sh")
+    add(artifact, "/app/ga.jar")
+    add(entrypointPath, "/app/ga.sh")
+    add(example, "/examples/simple.example")
+    run("chmod", "777", "/app/ga.sh")
+    workDir("/app")
+//    entryPoint("java", "-jar", "ga.jar", "$@")
+    entryPoint("/app/ga.sh")
   }
 }
