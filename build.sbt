@@ -68,12 +68,13 @@ dockerfile in docker := {
   new Dockerfile {
     from("java")
     maintainer("Aaron Pritzlaff")
-    add(artifact, "/app/ga.jar")
-    add(entrypointPath, "/app/ga.sh")
+    add(artifact, "/ga-app/ga.jar")
+    add(entrypointPath, "/ga-app/ga.sh")
     add(example, "/examples/simple.example")
-    run("chmod", "777", "/app/ga.sh")
-    workDir("/app")
+    env("GA_HOME", "/ga-app")
+    run("chmod", "777", "/ga-app/ga.sh")
+    workDir("/ga-app")
 //    entryPoint("java", "-jar", "ga.jar", "$@")
-    entryPoint("/app/ga.sh")
+    entryPoint("/ga-app/ga.sh")
   }
 }

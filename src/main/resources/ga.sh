@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Starting GA with " $@
+echo "Starting GA in ${GA_HOME} with " $@
 
-java -cp /conf -jar ga.jar $@
+java -jar ${GA_HOME}/ga.jar $@
