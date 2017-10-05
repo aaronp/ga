@@ -1,4 +1,33 @@
-Countdown
-=======
+Building the Project
+====================
 
-A command-line app which takes in a sequence of numbers and tries to find the last one (the target number) by using the previous inputs
+The library was intended to be a general purpose one, but it does
+include an example 'Countdown' application which works out a target
+number given some other input numbers.
+
+When first written, I misunderstood the problem, however, and thought
+you had to use all the numbers. Oh well... It still works, just with
+that slightly differently interpreted problem space.
+
+## Build
+
+To build the executable docker image:
+
+```scala
+  sbt docker
+```
+
+Which will produce a porpoiseltd/ga image
+
+
+To build and check this site content:
+
+```scala
+  sbt makeSite
+```
+
+or
+
+```scala
+  sbt previewSite
+```
